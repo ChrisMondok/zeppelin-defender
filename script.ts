@@ -39,6 +39,11 @@ class Game {
     this.objects.push(thing);
   }
 
+  remove(thing: GameObject) {
+    console.log('removing ' + thing);
+    this.objects.splice(this.objects.indexOf(thing), 1);
+  }
+
   tick() {
     for(let o of this.objects) o.tick();
   }
@@ -52,6 +57,8 @@ class Game {
 class Player implements GameObject {
   x = 128;
   y = 128;
+  dir = 0;
+  firing = false;
   gamepadNumber;
 
   constructor(readonly game: Game, readonly gamepadNumber: number) {}
@@ -61,6 +68,14 @@ class Player implements GameObject {
 	if(!isDeadZone(this.gamepad.axes[0], this.gamepad.axes[1])) {
 	  this.x += this.gamepad.axes[0] * 10;
 	  this.y += this.gamepad.axes[1] * 10;
+	  this.dir = Math.atan2(this.gamepad.axes[0],this.gamepad.axes[1]);
+	}
+	if(!this.firing && this.gamepad.buttons[0].pressed) {
+	  this.fireProjectile();
+	  this.firing = true;
+	}
+	if(!this.gamepad.buttons[0].pressed) {
+	  this.firing = false; 
 	}
   }
 
@@ -69,6 +84,10 @@ class Player implements GameObject {
     this.game.context.fillStyle = 'red';
     this.game.context.arc(this.x, this.y, 12, 0, 2 * Math.PI);
     this.game.context.fill();
+  }
+
+  fireProjectile() {
+    this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
   }
 }
 
