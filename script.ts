@@ -2,7 +2,7 @@ window.addEventListener('load', function() {
   let game = new Game();
 
   if(navigator.getGamepads()[0]) {
-    game.add(new Player(game, navigator.getGamepads()[0]));
+    game.add(new Player(game, 0));
   }
 
   window.addEventListener('gamepadconnected', (e: any) => {
@@ -52,10 +52,12 @@ class Game {
 class Player implements GameObject {
   x = 128;
   y = 128;
+  gamepadNumber;
 
-  constructor(readonly game: Game, readonly gamepad: Gamepad) {}
+  constructor(readonly game: Game, readonly gamepadNumber: number) {}
 
   tick() {
+	this.gamepad = navigator.getGamepads()[this.gamepadNumber];
     this.x += this.gamepad.axes[0] * 10;
     this.y += this.gamepad.axes[1] * 10;
   }
