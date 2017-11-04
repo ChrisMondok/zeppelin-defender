@@ -1,35 +1,47 @@
 window.addEventListener('load', function() {
   let game = new Game();
 
-  game.spawn(Player);
+  window.addEventListener('gamepadconnected', (e: any) => {
+    console.log('got a gamepad');
+    game.add(new Player(game, e.gamepad));
+  });
 
-  requestAnimationFrame(() => game.draw());
+  requestAnimationFrame(draw);
+
+  function draw() {
+    game.tick();
+    game.draw();
+    requestAnimationFrame(draw);
+  }
 });
 
 interface GameObject {
+  tick(): void;
   draw(): void;
 }
 
 class Game {
   readonly context: CanvasRenderingContext2D;
 
-  private readonly drawables: GameObject[] = [];
+  private readonly objects: GameObject[] = [];
 
   constructor () {
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
   }
 
-  spawn(thing: {new(game: Game): GameObject}) {
-    const x = new thing(this);
-    this.drawables.push(x);
+  add(thing: GameObject) {
+    console.log('adding thing');
+    this.objects.push(thing);
+  }
+
+  tick() {
+    for(let o of this.objects) o.tick();
   }
 
   draw() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-    for(let i = 0; i < this.drawables.length; i++) {
-      this.drawables[i].draw();
-    }
+    for(let o of this.objects) o.draw();
   }
 }
 
@@ -37,7 +49,12 @@ class Player implements GameObject {
   x = 128;
   y = 128;
 
-  constructor(readonly game: Game) {}
+  constructor(readonly game: Game, readonly gamepad: Gamepad) {}
+
+  tick() {
+    this.x += this.gamepad.axes[0] * 10;
+    this.y += this.gamepad.axes[1] * 10;
+  }
 
   draw() {
     this.game.context.beginPath();
