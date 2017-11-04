@@ -58,8 +58,10 @@ class Player implements GameObject {
 
   tick() {
 	this.gamepad = navigator.getGamepads()[this.gamepadNumber];
-    this.x += this.gamepad.axes[0] * 10;
-    this.y += this.gamepad.axes[1] * 10;
+	if(!isDeadZone(this.gamepad.axes[0], this.gamepad.axes[1])) {
+	  this.x += this.gamepad.axes[0] * 10;
+	  this.y += this.gamepad.axes[1] * 10;
+	}
   }
 
   draw() {
@@ -68,4 +70,8 @@ class Player implements GameObject {
     this.game.context.arc(this.x, this.y, 12, 0, 2 * Math.PI);
     this.game.context.fill();
   }
+}
+
+function isDeadZone(x, y) {
+  return Math.abs(x)<0.2 && Math.abs(y)<0.2;
 }
