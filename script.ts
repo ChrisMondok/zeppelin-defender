@@ -1,6 +1,10 @@
 window.addEventListener('load', function() {
   let game = new Game();
 
+  if(navigator.getGamepads()[0]) {
+    game.add(new Player(game, navigator.getGamepads()[0]));
+  }
+
   window.addEventListener('gamepadconnected', (e: any) => {
     console.log('got a gamepad');
     game.add(new Player(game, e.gamepad));
