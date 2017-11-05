@@ -3,6 +3,7 @@ window.addEventListener('load', function() {
 
   if(navigator.getGamepads()[0]) {
     game.add(new Player(game, 0));
+    game.add(new FPSCounter(game));
   }
 
   window.addEventListener('gamepadconnected', (e: any) => {
@@ -12,15 +13,15 @@ window.addEventListener('load', function() {
 
   requestAnimationFrame(draw);
 
-  function draw() {
-    game.tick();
+  function draw(ts: number) {
+    game.tick(ts);
     game.draw();
     requestAnimationFrame(draw);
   }
 });
 
 interface GameObject {
-  tick(): void;
+  tick(ts: number): void;
   draw(): void;
 }
 
@@ -44,8 +45,8 @@ class Game {
     this.objects.splice(this.objects.indexOf(thing), 1);
   }
 
-  tick() {
-    for(let o of this.objects) o.tick();
+  tick(ts: number) {
+    for(let o of this.objects) o.tick(ts);
   }
 
   draw() {
@@ -98,4 +99,25 @@ class Player implements GameObject {
 
 function isDeadZone(x: number, y: number) {
   return Math.abs(x)<0.2 && Math.abs(y)<0.2;
+}
+
+class FPSCounter implements GameObject {
+  x = 10;
+  y = 10;
+  prevTs = 0;
+  ts = 0;
+
+  constructor(readonly game: Game){}
+  
+  tick(ts: number) {
+    this.prevTs = this.ts;
+    this.ts = ts;
+  }
+
+  draw() {
+    const fps = Math.round((this.ts - this.prevTs) * (3600 / 1000));
+    this.game.context.beginPath();
+    this.game.strokeStyle='black';
+    this.game.context.strokeText(fps, this.x, this.y);
+  }
 }
