@@ -116,7 +116,7 @@ class FPSCounter implements GameObject {
   draw() {
     const fps = Math.round((this.ts - this.prevTs) * (3600 / 1000));
     this.game.context.beginPath();
-    this.game.strokeStyle='black';
-    this.game.context.strokeText(fps, this.x, this.y);
+    this.game.context.strokeStyle='black';
+    this.game.context.strokeText(fps.toString(), this.x, this.y);
   }
 }
