@@ -1,9 +1,10 @@
 window.addEventListener('load', function() {
   let game = new Game();
 
+  game.add(new FPSCounter(game));
+
   if(navigator.getGamepads()[0]) {
     game.add(new Player(game, 0));
-    game.add(new FPSCounter(game));
   }
 
   window.addEventListener('gamepadconnected', (e: Event&{gamepad: Gamepad}) => {
