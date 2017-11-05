@@ -7,3 +7,15 @@ function distanceSquared(a: Point, b: Point) {
 function direction(a: Point, b: Point) {
   return Math.atan2(b.y - a.y, b.x - a.x);
 }
+
+function magnitude(x: number, y: number) {
+  return Math.sqrt((x*x) + (y*y));
+}
+
+function clamp(a: Point, maxMag: number) {
+  let m = magnitude(a.x, a.y);
+  let ratio = m / maxMag
+  return m < maxMag
+    ? a
+    : {x: a.x/ratio, y:a.y/ratio}
+}
