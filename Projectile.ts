@@ -11,10 +11,10 @@ class Projectile implements GameObject {
     }
   }
 
-  draw() {
-    this.game.context.beginPath();
-    this.game.context.fillStyle = 'black';
-    this.game.context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
-    this.game.context.fill();
+  draw(context: CanvasRenderingContext2D) {
+    context.beginPath();
+    context.fillStyle = 'black';
+    context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
+    context.fill();
   }
 }

@@ -1,5 +1,5 @@
 class Game {
-  readonly context: CanvasRenderingContext2D;
+  private readonly context: CanvasRenderingContext2D;
 
   private readonly objects: GameObject[] = [];
 
@@ -24,6 +24,6 @@ class Game {
 
   draw() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-    for(let o of this.objects) o.draw();
+    for(let o of this.objects) o.draw(this.context);
   }
 }

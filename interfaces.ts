@@ -3,6 +3,10 @@ interface Function {
 }
 
 interface GameObject {
+  x: number;
+  y: number;
+  depth: number;
+
   tick(ts: number): void;
-  draw(): void;
+  draw(context: CanvasRenderingContext2D): void;
 }

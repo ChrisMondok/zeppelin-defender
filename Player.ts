@@ -22,17 +22,17 @@ class Player implements GameObject {
     }
   }
 
-  draw() {
-    this.game.context.beginPath();
-    this.game.context.fillStyle = 'red';
-    this.game.context.arc(this.x, this.y, 12, 0, 2 * Math.PI);
-    this.game.context.fill();
+  draw(context: CanvasRenderingContext2D) {
+    context.beginPath();
+    context.fillStyle = 'red';
+    context.arc(this.x, this.y, 12, 0, 2 * Math.PI);
+    context.fill();
 
-    this.game.context.beginPath();
-    this.game.context.strokeStyle = 'black';
-    this.game.context.moveTo(this.x, this.y);
-    this.game.context.lineTo(this.x + (Math.sin(this.dir) * 12), this.y + (Math.cos(this.dir) * 12))
-    this.game.context.stroke()
+    context.beginPath();
+    context.strokeStyle = 'black';
+    context.moveTo(this.x, this.y);
+    context.lineTo(this.x + (Math.sin(this.dir) * 12), this.y + (Math.cos(this.dir) * 12))
+    context.stroke()
   }
 
   fireProjectile() {
