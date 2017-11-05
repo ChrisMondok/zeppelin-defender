@@ -1,3 +1,4 @@
+@queryable
 class Player implements GameObject {
   x: number;
   y: number;
@@ -101,6 +102,8 @@ class Player implements GameObject {
 
   private handleInput() {
     const gamepad = navigator.getGamepads()[this.gamepadNumber];
+
+    if(!gamepad) return;
 
     if(this.platform) {
       if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
