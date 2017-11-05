@@ -1,7 +1,6 @@
 class Projectile implements GameObject {
   lifetime = 20;
-  constructor(readonly game: Game, readonly x: number, readonly y: number, readonly dir: number) {}
-  console.log(this);
+  constructor(readonly game: Game, public x: number, public y: number, public dir: number) {}
 
   tick() {
     this.x += Math.sin(this.dir) * 20;

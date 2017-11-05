@@ -59,24 +59,23 @@ class Player implements GameObject {
   y = 128;
   dir = 0;
   firing = false;
-  gamepadNumber;
 
   constructor(readonly game: Game, readonly gamepadNumber: number) {}
 
   tick() {
-	this.gamepad = navigator.getGamepads()[this.gamepadNumber];
-	if(!isDeadZone(this.gamepad.axes[0], this.gamepad.axes[1])) {
-	  this.x += this.gamepad.axes[0] * 10;
-	  this.y += this.gamepad.axes[1] * 10;
-	  this.dir = Math.atan2(this.gamepad.axes[0],this.gamepad.axes[1]);
-	}
-	if(!this.firing && this.gamepad.buttons[0].pressed) {
-	  this.fireProjectile();
-	  this.firing = true;
-	}
-	if(!this.gamepad.buttons[0].pressed) {
-	  this.firing = false; 
-	}
+    var gamepad = navigator.getGamepads()[this.gamepadNumber];
+    if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
+      this.x += gamepad.axes[0] * 10;
+      this.y += gamepad.axes[1] * 10;
+      this.dir = Math.atan2(gamepad.axes[0],gamepad.axes[1]);
+    }
+    if(!this.firing && gamepad.buttons[0].pressed) {
+      this.fireProjectile();
+      this.firing = true;
+    }
+    if(!gamepad.buttons[0].pressed) {
+      this.firing = false;
+    }
   }
 
   draw() {
@@ -97,6 +96,6 @@ class Player implements GameObject {
   }
 }
 
-function isDeadZone(x, y) {
+function isDeadZone(x: number, y: number) {
   return Math.abs(x)<0.2 && Math.abs(y)<0.2;
 }
