@@ -35,12 +35,12 @@ class Game {
   }
 
   add(thing: GameObject) {
-    console.log('adding thing');
+    console.log('adding ' + thing.constructor.name);
     this.objects.push(thing);
   }
 
   remove(thing: GameObject) {
-    console.log('removing ' + thing);
+    console.log('removing ' + thing.constructor.name);
     this.objects.splice(this.objects.indexOf(thing), 1);
   }
 
@@ -84,6 +84,12 @@ class Player implements GameObject {
     this.game.context.fillStyle = 'red';
     this.game.context.arc(this.x, this.y, 12, 0, 2 * Math.PI);
     this.game.context.fill();
+
+    this.game.context.beginPath();
+    this.game.context.strokeStyle = 'black';
+    this.game.context.moveTo(this.x, this.y);
+    this.game.context.lineTo(this.x + (Math.sin(this.dir) * 12), this.y + (Math.cos(this.dir) * 12))
+    this.game.context.stroke()
   }
 
   fireProjectile() {
