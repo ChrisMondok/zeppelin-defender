@@ -17,13 +17,21 @@ class Player implements GameObject {
   }
 
   tick(dt: number) {
+    const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
+
     this.handleInput();
+
     this.x += this.velocity.x * dt/1000;
     this.y += this.velocity.y * dt/1000;
 
+    const dv = {
+      x: this.velocity.x - oldVelocity.x,
+      y: this.velocity.y - oldVelocity.y,
+    };
+
     if(this.platform) {
-      this.platform.velocity.x += this.velocity.x/-50;
-      this.platform.velocity.y += this.velocity.y/-50;
+      this.platform.velocity.x += dv.x/-5;
+      this.platform.velocity.y += dv.y/-5;
     }
   }
 
