@@ -1,31 +1,29 @@
 class Player implements GameObject {
   x: number;
   y: number;
+  readonly velocity = {x: 0, y: 0};
   z = 0;
   dir = 0;
   firing = false;
 
+  platform: Platform|null;
+
   constructor(readonly game: Game, readonly gamepadNumber: number) {
     // Whoa this seems fragile.
-    const platform = game.getObjectsOfType(Platform)[0];
-    this.x = platform.x;
-    this.y = platform.y;
-    platform.addContents(this);
+    this.platform = game.getObjectsOfType(Platform)[0];
+    this.x = this.platform.x;
+    this.y = this.platform.y;
+    this.platform.addContents(this);
   }
 
-  tick() {
-    var gamepad = navigator.getGamepads()[this.gamepadNumber];
-    if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
-      this.x += gamepad.axes[0] * 10;
-      this.y += gamepad.axes[1] * 10;
-      this.dir = Math.atan2(gamepad.axes[1],gamepad.axes[0]);
-    }
-    if(!this.firing && gamepad.buttons[0].pressed) {
-      this.fireProjectile();
-      this.firing = true;
-    }
-    if(!gamepad.buttons[0].pressed) {
-      this.firing = false;
+  tick(dt: number) {
+    this.handleInput();
+    this.x += this.velocity.x * dt/1000;
+    this.y += this.velocity.y * dt/1000;
+
+    if(this.platform) {
+      this.platform.velocity.x += this.velocity.x/-50;
+      this.platform.velocity.y += this.velocity.y/-50;
     }
   }
 
@@ -44,6 +42,26 @@ class Player implements GameObject {
 
   fireProjectile() {
     this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
+  }
+
+  private handleInput() {
+    const gamepad = navigator.getGamepads()[this.gamepadNumber];
+    if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
+      this.velocity.x = gamepad.axes[0] * 200;
+      this.velocity.y = gamepad.axes[1] * 200;
+      this.dir = Math.atan2(this.velocity.y,this.velocity.x);
+    }
+    else {
+      this.velocity.x = 0;
+      this.velocity.y = 0;
+    }
+    if(!this.firing && gamepad.buttons[0].pressed) {
+      this.fireProjectile();
+      this.firing = true;
+    }
+    if(!gamepad.buttons[0].pressed) {
+      this.firing = false;
+    }
   }
 }
 
