@@ -6,9 +6,8 @@ window.addEventListener('load', function() {
     game.add(new FPSCounter(game));
   }
 
-  window.addEventListener('gamepadconnected', (e: any) => {
-    console.log('got a gamepad');
-    game.add(new Player(game, e.gamepad));
+  window.addEventListener('gamepadconnected', (e: Event&{gamepad: Gamepad}) => {
+    game.add(new Player(game, e.gamepad.index));
   });
 
   requestAnimationFrame(draw);
