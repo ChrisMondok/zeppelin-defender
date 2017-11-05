@@ -14,7 +14,8 @@ class Game {
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
-    this.add(new Platform(this, {x: canvas.width/2, y: canvas.height/2}));
+    this.add(new Platform(this, {x: canvas.width / 4, y: canvas.height/2}));
+    this.add(new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2}));
 
   }
 
