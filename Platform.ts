@@ -29,6 +29,20 @@ class Platform implements GameObject {
     this.contents.push(c);
   }
 
+  removeContents(c: GameObject) {
+    this.contents.splice(this.contents.indexOf(c), 1);
+  }
+
+  occludes(point: Point|Point3D) {
+    const occludesXY = Math.abs(this.x - point.x) < this.width/2 && Math.abs(this.y - point.y) < this.height/2;
+    if(!occludesXY) return false;
+
+    if(!isPoint3D(point)) return true;
+
+    // TODO: thickness or something?
+    return Math.abs((this.z + 1) - point.z) < 100;
+  }
+
   tick(ts: number) {
     const magnitude = distanceSquared(this, this.center) * this.springConstant;
     const dir = direction(this, this.center);

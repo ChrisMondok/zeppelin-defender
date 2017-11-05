@@ -27,10 +27,6 @@ class Game {
     console.log('adding ' + thing.constructor.name);
     this.objects.push(thing);
 
-    // If we're going to be spawning lots of things, consider more efficient insertion instead.
-    // Also, this assumes objects never move vertically.
-    this.objects.sort(t => t.z);
-
     if(isQueryable(thing.constructor)) {
       this.objectsByKey[thing.constructor.__queryKey].push(thing);
     }
@@ -48,7 +44,11 @@ class Game {
 
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
+
+    this.objects.sort(t => t.z);
+
     for(let o of this.objects) o.tick(dt);
+
     this.lastTick = ts;
   }
 
