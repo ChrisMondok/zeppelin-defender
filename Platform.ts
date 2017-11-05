@@ -39,8 +39,9 @@ class Platform implements GameObject {
 
     if(!isPoint3D(point)) return true;
 
-    // TODO: thickness or something?
-    return Math.abs((this.z + 1) - point.z) < 100;
+    const thickness = 50;
+    
+    return Math.abs(point.z - (this.z + 1 - thickness)) <= thickness;
   }
 
   tick(ts: number) {
