@@ -52,6 +52,10 @@ class Player implements GameObject {
         occludingPlatforms[0].addContents(this);
       }
     }
+
+    if(this.z < -200) {
+      this.destroy();
+    }
   }
 
   draw(context: CanvasRenderingContext2D) {
