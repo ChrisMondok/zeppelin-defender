@@ -46,7 +46,7 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    this.objects.sort(t => t.z);
+    this.objects.sort((a, b) => a.z - b.z);
 
     for(let o of this.objects) o.tick(dt);
 
