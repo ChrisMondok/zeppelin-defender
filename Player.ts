@@ -61,30 +61,42 @@ class Player implements GameObject {
   draw(context: CanvasRenderingContext2D) {
     const radius = 12;
     //draw shadow
-    if(this.z > 0) {
-      const shadowRadius = Math.max(2, radius - this.z/15);
-      context.beginPath();
-      context.fillStyle = 'rgba(0, 0, 0, 0.4)';
-      context.arc(this.x, this.y, shadowRadius, 0, 2 * Math.PI);
-      context.fill();
+    context.save();
+    context.beginPath();
+    for(let p of this.game.getObjectsOfType(Platform).filter(p => this.z > p.z)) {
+      context.rect(p.x - p.width/2, p.y - p.height/2, p.width, p.height);
     }
+    context.clip();
+    context.beginPath();
+    context.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    context.arc(this.x, this.y, radius, 0, 2 * Math.PI);
+    context.fill();
+    context.restore();
 
     //draw player
-    context.translate(0, -this.z/2);
+    context.translate(this.x, this.y - this.z/2);
+    const scale = Math.max(0, 1 + this.z/200);
+    context.scale(scale, scale);
+    context.rotate(this.dir);
     context.beginPath();
     context.fillStyle = 'red';
-    context.arc(this.x, this.y, radius, 0, 2 * Math.PI);
+    context.arc(0, 0, radius, 0, 2 * Math.PI);
     context.fill();
 
     context.beginPath();
     context.strokeStyle = 'black';
-    context.moveTo(this.x, this.y);
-    context.lineTo(this.x + (Math.cos(this.dir) * radius), this.y + (Math.sin(this.dir) * radius))
+    context.moveTo(0, 0);
+    context.lineTo(radius, 0);
     context.stroke()
   }
 
   fireProjectile() {
     this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
+  }
+
+  destroy() {
+    if(this.platform) this.platform.removeContents(this);
+    this.game.remove(this);
   }
 
   private handleInput() {
@@ -101,6 +113,8 @@ class Player implements GameObject {
         this.velocity.y = 0;
       }
       if(gamepad.buttons[0].pressed) {
+        this.velocity.x += this.platform.velocity.x;
+        this.velocity.y += this.platform.velocity.y;
         this.velocity.z = 250;
       }
     }
