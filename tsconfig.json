@@ -6,7 +6,8 @@
 		"strictNullChecks": true,
         "sourceMap": true,
 		"outFile": "out.js",
-		"lib": ["ES5","DOM","ES2015.Promise"]
+		"lib": ["ES5","DOM","ES2015.Promise"],
+		"experimentalDecorators": true
     },
 	"exclude": [
 		"lib"

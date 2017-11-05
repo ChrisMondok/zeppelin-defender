@@ -1,3 +1,4 @@
+@queryable
 class Platform implements GameObject {
   x: number;
   y: number;
