@@ -47,7 +47,7 @@ class Game {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
     for(const gamepad of navigator.getGamepads()) {
-      if(!this.getObjectsOfType(Player).some(p => p.gamepadNumber == gamepad.index))
+      if(gamepad && !this.getObjectsOfType(Player).some(p => p.gamepadNumber == gamepad.index))
         this.add(new Player(this, gamepad.index));
     }
 
