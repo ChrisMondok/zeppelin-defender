@@ -3,6 +3,8 @@ class Game {
 
   private readonly objects: GameObject[] = [];
 
+  private lastTick: number|null = null;
+
   constructor () {
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
@@ -19,7 +21,9 @@ class Game {
   }
 
   tick(ts: number) {
-    for(let o of this.objects) o.tick(ts);
+    const dt = this.lastTick === null ? 0 : ts - this.lastTick;
+    for(let o of this.objects) o.tick(dt);
+    this.lastTick = ts;
   }
 
   draw() {

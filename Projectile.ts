@@ -2,7 +2,7 @@ class Projectile implements GameObject {
   lifetime = 20;
   constructor(readonly game: Game, public x: number, public y: number, public dir: number) {}
 
-  tick() {
+  tick(dt: number) {
     this.x += Math.sin(this.dir) * 20;
     this.y += Math.cos(this.dir) * 20;
     this.lifetime--;
