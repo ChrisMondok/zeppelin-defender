@@ -1,4 +1,5 @@
 class Projectile implements GameObject {
+  z = 0;
   lifetime = 20;
   constructor(readonly game: Game, public x: number, public y: number, public dir: number) {}
 

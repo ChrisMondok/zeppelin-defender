@@ -8,11 +8,16 @@ class Game {
   constructor () {
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
+    this.add(new Platform(this, {x: canvas.width/2, y: canvas.height/2}));
   }
 
   add(thing: GameObject) {
     console.log('adding ' + thing.constructor.name);
     this.objects.push(thing);
+
+    // If we're going to be spawning lots of things, consider more efficient insertion instead.
+    // Also, this assumes objects never move vertically.
+    this.objects.sort(t => t.z);
   }
 
   remove(thing: GameObject) {

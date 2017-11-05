@@ -1,6 +1,7 @@
 class FPSCounter implements GameObject {
   x = 10;
   y = 10;
+  z = Infinity;
 
   private dt: number = 0;
 

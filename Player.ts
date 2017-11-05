@@ -1,6 +1,7 @@
 class Player implements GameObject {
   x = 128;
   y = 128;
+  z = 0;
   dir = 0;
   firing = false;
 

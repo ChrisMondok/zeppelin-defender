@@ -1,5 +1,5 @@
 window.addEventListener('load', function() {
-  let game = new Game();
+  let game = (window as any).game = new Game();
 
   game.add(new FPSCounter(game));
 
