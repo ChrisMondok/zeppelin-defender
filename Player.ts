@@ -1,11 +1,17 @@
 class Player implements GameObject {
-  x = 128;
-  y = 128;
+  x: number;
+  y: number;
   z = 0;
   dir = 0;
   firing = false;
 
-  constructor(readonly game: Game, readonly gamepadNumber: number) {}
+  constructor(readonly game: Game, readonly gamepadNumber: number) {
+    // Whoa this seems fragile.
+    const platform = game.getObjectsOfType(Platform)[0];
+    this.x = platform.x;
+    this.y = platform.y;
+    platform.addContents(this);
+  }
 
   tick() {
     var gamepad = navigator.getGamepads()[this.gamepadNumber];
