@@ -39,7 +39,7 @@ class Platform implements GameObject {
 
     if(!isPoint3D(point)) return true;
 
-    const thickness = 50;
+    const thickness = 10;
     
     return Math.abs(point.z - (this.z + 1 - thickness)) <= thickness;
   }
