@@ -18,7 +18,7 @@ class Player implements GameObject {
     if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
       this.x += gamepad.axes[0] * 10;
       this.y += gamepad.axes[1] * 10;
-      this.dir = Math.atan2(gamepad.axes[0],gamepad.axes[1]);
+      this.dir = Math.atan2(gamepad.axes[1],gamepad.axes[0]);
     }
     if(!this.firing && gamepad.buttons[0].pressed) {
       this.fireProjectile();
@@ -38,7 +38,7 @@ class Player implements GameObject {
     context.beginPath();
     context.strokeStyle = 'black';
     context.moveTo(this.x, this.y);
-    context.lineTo(this.x + (Math.sin(this.dir) * 12), this.y + (Math.cos(this.dir) * 12))
+    context.lineTo(this.x + (Math.cos(this.dir) * 12), this.y + (Math.sin(this.dir) * 12))
     context.stroke()
   }
 

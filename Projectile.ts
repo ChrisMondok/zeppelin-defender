@@ -4,8 +4,8 @@ class Projectile implements GameObject {
   constructor(readonly game: Game, public x: number, public y: number, public dir: number) {}
 
   tick(dt: number) {
-    this.x += Math.sin(this.dir) * 20;
-    this.y += Math.cos(this.dir) * 20;
+    this.x += Math.cos(this.dir) * 20;
+    this.y += Math.sin(this.dir) * 20;
     this.lifetime--;
     if(this.lifetime < 0) {
       this.game.remove(this);
