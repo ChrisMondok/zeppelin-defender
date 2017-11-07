@@ -19,7 +19,7 @@ class Platform implements GameObject {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    context.fillStyle = '#ccc';
     context.strokeStyle = 'black';
     context.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
     context.strokeRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
@@ -39,8 +39,9 @@ class Platform implements GameObject {
 
     if(!isPoint3D(point)) return true;
 
-    // TODO: thickness or something?
-    return Math.abs((this.z + 1) - point.z) < 100;
+    const thickness = 10;
+    
+    return Math.abs(point.z - (this.z + 1 - thickness)) <= thickness;
   }
 
   tick(ts: number) {

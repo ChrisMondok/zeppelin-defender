@@ -47,7 +47,12 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    this.objects.sort(t => t.z);
+    for(const gamepad of navigator.getGamepads()) {
+      if(gamepad && !this.getObjectsOfType(Player).some(p => p.gamepadNumber == gamepad.index))
+        this.add(new Player(this, gamepad.index));
+    }
+
+    this.objects.sort((a, b) => a.z - b.z);
 
     for(let o of this.objects) o.tick(dt);
 
