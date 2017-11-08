@@ -37,8 +37,7 @@ class Player implements GameObject {
 
     if(this.platform) {
       if(!this.platform.occludes(this)) {
-        this.platform.removeContents(this);
-        this.platform = null;
+        this.removeFromPlatform();
       } else {
         this.platform.velocity.x += dv.x/-5;
         this.platform.velocity.y += dv.y/-5;
@@ -96,8 +95,16 @@ class Player implements GameObject {
     this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
   }
 
+  jump() {
+    if(!this.platform) return;
+    this.velocity.x += this.platform.velocity.x;
+    this.velocity.y += this.platform.velocity.y;
+    this.velocity.z = 250;
+    this.removeFromPlatform();
+  }
+
   destroy() {
-    if(this.platform) this.platform.removeContents(this);
+    this.removeFromPlatform();
     this.game.remove(this);
   }
 
@@ -123,9 +130,7 @@ class Player implements GameObject {
 
       if(gamepad.buttons[0].pressed && this.jumpButtonHeld == false) {
         this.jumpButtonHeld = true;
-        this.velocity.x += this.platform.velocity.x;
-        this.velocity.y += this.platform.velocity.y;
-        this.velocity.z = 250;
+        this.jump();
       }
     }
     if(!this.firing && gamepad.buttons[2].pressed) {
@@ -135,6 +140,12 @@ class Player implements GameObject {
     if(!gamepad.buttons[2].pressed) {
       this.firing = false;
     }
+  }
+
+  private removeFromPlatform() {
+    if(!this.platform) return;
+    this.platform.removeContents(this);
+    this.platform = null;
   }
 }
 
