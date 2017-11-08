@@ -8,22 +8,23 @@ class Player implements GameObject {
 
   platform: Platform|null;
 
-  readonly gamepadInput?: GamepadInput
-
-  constructor(readonly game: Game, readonly gamepadNumber: number) {
+  constructor(readonly game: Game, readonly gamepadInput: GamepadInput) {
     // Whoa this seems fragile.
     this.platform = game.getObjectsOfType(Platform)[0];
     this.x = this.platform.x;
     this.y = this.platform.y;
     this.z = this.platform.z + 1;
     this.platform.addContents(this);
-    this.gamepadInput = new GamepadInput(gamepadNumber);
   }
 
   tick(dt: number) {
     const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
 
-    this.handleInput();
+    if(this.platform) {
+      this.velocity.x = this.gamepadInput.getAxis(0) * 200;
+      this.velocity.y = this.gamepadInput.getAxis(1) * 200;
+      this.dir = Math.atan2(this.velocity.y,this.velocity.x);
+    }
 
     this.velocity.z -= 9.8;
 
@@ -111,24 +112,6 @@ class Player implements GameObject {
     this.game.remove(this);
   }
 
-  private handleInput() {
-    const gamepad = navigator.getGamepads()[this.gamepadNumber];
-
-    if(!gamepad) return;
-
-    if(this.platform) {
-      if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
-        this.velocity.x = gamepad.axes[0] * 200;
-        this.velocity.y = gamepad.axes[1] * 200;
-        this.dir = Math.atan2(this.velocity.y,this.velocity.x);
-      }
-      else {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-      }
-    }
-  }
-
   private removeFromPlatform() {
     if(!this.platform) return;
     this.platform.removeContents(this);
@@ -136,6 +119,3 @@ class Player implements GameObject {
   }
 }
 
-function isDeadZone(x: number, y: number) {
-  return Math.abs(x)<0.2 && Math.abs(y)<0.2;
-}
