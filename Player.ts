@@ -6,6 +6,7 @@ class Player implements GameObject {
   z = 0;
   dir = 0;
   firing = false;
+  jumpButtonHeld = false;
 
   platform: Platform|null;
 
@@ -105,6 +106,10 @@ class Player implements GameObject {
 
     if(!gamepad) return;
 
+    if(!gamepad.buttons[0].pressed){
+      this.jumpButtonHeld = false;
+    }
+
     if(this.platform) {
       if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
         this.velocity.x = gamepad.axes[0] * 200;
@@ -115,7 +120,9 @@ class Player implements GameObject {
         this.velocity.x = 0;
         this.velocity.y = 0;
       }
-      if(gamepad.buttons[0].pressed) {
+
+      if(gamepad.buttons[0].pressed && this.jumpButtonHeld == false) {
+        this.jumpButtonHeld = true;
         this.velocity.x += this.platform.velocity.x;
         this.velocity.y += this.platform.velocity.y;
         this.velocity.z = 250;
