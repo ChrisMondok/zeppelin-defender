@@ -20,10 +20,11 @@ class Player implements GameObject {
   tick(dt: number) {
     const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
 
+    this.dir = Math.atan2(this.gamepadInput.getAxis(1),this.gamepadInput.getAxis(0));
+
     if(this.platform) {
       this.velocity.x = this.gamepadInput.getAxis(0) * 200;
       this.velocity.y = this.gamepadInput.getAxis(1) * 200;
-      this.dir = Math.atan2(this.velocity.y,this.velocity.x);
     }
 
     this.velocity.z -= 9.8;
