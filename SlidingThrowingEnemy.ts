@@ -4,7 +4,8 @@ class SlidingThrowingEnemy implements GameObject {
   y: number;
   xpid: PID;
   ypid: PID;
-  target: Point;
+  target = {x:300, y:200};
+  currentTarget: Point;
   private velocity = {x:0, y:0};
   private acceleration = {x:0, y:0};
   readonly MAX_VELOCITY = 5;
@@ -14,14 +15,14 @@ class SlidingThrowingEnemy implements GameObject {
   constructor(readonly game: Game, readonly center: Point) {
     this.x = this.center.x;
     this.y = this.center.y;
-    this.xpid = new PID(0.05,0.0001,1);
-    this.ypid = new PID(0.05,0.0001,1);
+    this.xpid = new PID(0.12,0.00003,2);
+    this.ypid = new PID(0.12,0.00003,2);
   }
 
   tick(dt: number) {
     this.findTarget();
-    if(this.target) {
-      this.seekTarget(this.target, dt)
+    if(this.currentTarget) {
+      this.seekTarget(this.currentTarget, dt)
     }
     this.velocity.x += this.acceleration.x;
     this.velocity.y += this.acceleration.y;
@@ -38,7 +39,7 @@ class SlidingThrowingEnemy implements GameObject {
   }
 
   private findTarget() {
-    this.target = {x: 500, y: 250};
+    this.currentTarget = Object.create(this.target);
   }
 
   private seekTarget(target: Point, dt: number) {
