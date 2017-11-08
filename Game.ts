@@ -54,7 +54,10 @@ class Game {
 
     this.objects.sort((a, b) => a.z - b.z);
 
-    for(let o of this.objects) o.tick(dt);
+    for(let o of this.objects) {
+      o.tick(dt);
+      if(hasBindings(o)) o.__doBindings();
+    }
 
     this.lastTick = ts;
   }
