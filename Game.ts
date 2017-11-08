@@ -17,6 +17,7 @@ class Game {
     this.add(new Platform(this, {x: canvas.width / 4, y: canvas.height/2}));
     this.add(new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2}));
     this.add(new SlidingThrowingEnemy(this, {x: 300, y: 200}));
+    this.add(new Target(this, (canvas.width / 2), (canvas.height/2)));
 
   }
 

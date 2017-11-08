@@ -1,3 +1,4 @@
+@queryable
 class Projectile implements GameObject {
   z = 0;
   lifetime = 20;
