@@ -5,10 +5,10 @@ class Player implements GameObject {
   readonly velocity = {x: 0, y: 0, z: 0};
   z = 0;
   dir = 0;
-  firing = false;
-  jumpButtonHeld = false;
 
   platform: Platform|null;
+
+  readonly gamepadInput?: GamepadInput
 
   constructor(readonly game: Game, readonly gamepadNumber: number) {
     // Whoa this seems fragile.
@@ -17,6 +17,7 @@ class Player implements GameObject {
     this.y = this.platform.y;
     this.z = this.platform.z + 1;
     this.platform.addContents(this);
+    this.gamepadInput = new GamepadInput(gamepadNumber);
   }
 
   tick(dt: number) {
@@ -91,10 +92,12 @@ class Player implements GameObject {
     context.stroke()
   }
 
+  @bindTo('press', {button: 2})
   fireProjectile() {
     this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
   }
 
+  @bindTo('press', {button: 0})
   jump() {
     if(!this.platform) return;
     this.velocity.x += this.platform.velocity.x;
@@ -113,10 +116,6 @@ class Player implements GameObject {
 
     if(!gamepad) return;
 
-    if(!gamepad.buttons[0].pressed){
-      this.jumpButtonHeld = false;
-    }
-
     if(this.platform) {
       if(!isDeadZone(gamepad.axes[0], gamepad.axes[1])) {
         this.velocity.x = gamepad.axes[0] * 200;
@@ -127,18 +126,6 @@ class Player implements GameObject {
         this.velocity.x = 0;
         this.velocity.y = 0;
       }
-
-      if(gamepad.buttons[0].pressed && this.jumpButtonHeld == false) {
-        this.jumpButtonHeld = true;
-        this.jump();
-      }
-    }
-    if(!this.firing && gamepad.buttons[2].pressed) {
-      this.fireProjectile();
-      this.firing = true;
-    }
-    if(!gamepad.buttons[2].pressed) {
-      this.firing = false;
     }
   }
 
