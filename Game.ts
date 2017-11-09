@@ -50,8 +50,6 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    this.objects.sort((a, b) => a.z - b.z);
-
     this.gamepadInput.tick();
 
     for(let o of this.objects) {
@@ -69,6 +67,9 @@ class Game {
 
   draw() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+
+    this.objects.sort((a, b) => a.z - b.z);
+
     for(let o of this.objects) {
       this.context.save();
       o.draw(this.context);

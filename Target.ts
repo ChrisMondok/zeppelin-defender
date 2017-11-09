@@ -1,10 +1,9 @@
 @queryable
 class Target implements GameObject {
-
     readonly velocity = {x: 0, y: .5};
     readonly width = 20;
     readonly height = 20;
-    z: number;
+    z = 0;
     hit = false;
     
     constructor(readonly game : Game, public x: number, public y: number){
