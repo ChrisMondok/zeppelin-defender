@@ -4,7 +4,7 @@ class Player implements GameObject {
   y: number;
   readonly velocity = {x: 0, y: 0, z: 0};
   z = 0;
-  dir = 0;
+  direction = 0;
 
   @bindToAxis(0)
   moveX = 0;
@@ -26,7 +26,8 @@ class Player implements GameObject {
   tick(dt: number) {
     const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
 
-    this.dir = Math.atan2(this.moveY, this.moveX);
+    if(Math.max(Math.abs(this.moveX), this.moveY) > 0)
+      this.direction = Math.atan2(this.moveY, this.moveX);
 
     if(this.platform) {
       this.velocity.x = this.moveX * 200;
@@ -87,7 +88,7 @@ class Player implements GameObject {
     context.translate(this.x, this.y - this.z/2);
     const scale = Math.max(0, 1 + this.z/200);
     context.scale(scale, scale);
-    context.rotate(this.dir);
+    context.rotate(this.direction);
     context.beginPath();
     context.fillStyle = 'red';
     context.arc(0, 0, radius, 0, 2 * Math.PI);
@@ -102,7 +103,7 @@ class Player implements GameObject {
 
   @bindTo('press', {button: 2})
   fireProjectile() {
-    this.game.add(new Projectile(this.game, this.x, this.y, this.dir));
+    this.game.add(new Projectile(this.game, this.x, this.y, this.direction));
   }
 
   @bindTo('press', {button: 0})
