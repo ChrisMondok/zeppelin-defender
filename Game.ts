@@ -9,6 +9,8 @@ class Game {
 
   private lastTick: number|null = null;
 
+  private readonly gamepadInput = new GamepadInput(0);
+
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByKey[(type as any).__queryKey] = [];
 
@@ -18,7 +20,7 @@ class Game {
     this.add(new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2}));
     this.add(new SlidingThrowingEnemy(this, {x: 300, y: 200}));
     this.add(new Target(this, (canvas.width / 2), (canvas.height/2)));
-
+    this.add(new Player(this));
   }
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
@@ -48,16 +50,18 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    for(const gamepad of navigator.getGamepads()) {
-      if(gamepad && !this.getObjectsOfType(Player).some(p => p.gamepadInput.gamepadNumber == gamepad.index))
-        this.add(new Player(this, new GamepadInput(gamepad.index)));
-    }
-
     this.objects.sort((a, b) => a.z - b.z);
 
+    this.gamepadInput.tick();
+
     for(let o of this.objects) {
+      if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
       o.tick(dt);
-      if(hasBindings(o)) o.__doBindings();
+      if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
+    }
+
+    if(!this.getObjectsOfType(Player).length) {
+      this.add(new Player(this));
     }
 
     this.lastTick = ts;

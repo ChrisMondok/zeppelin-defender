@@ -6,9 +6,15 @@ class Player implements GameObject {
   z = 0;
   dir = 0;
 
+  @bindToAxis(0)
+  moveX = 0;
+
+  @bindToAxis(1)
+  moveY = 0;
+
   platform: Platform|null;
 
-  constructor(readonly game: Game, readonly gamepadInput: GamepadInput) {
+  constructor(readonly game: Game) {
     // Whoa this seems fragile.
     this.platform = game.getObjectsOfType(Platform)[0];
     this.x = this.platform.x;
@@ -20,11 +26,11 @@ class Player implements GameObject {
   tick(dt: number) {
     const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
 
-    this.dir = Math.atan2(this.gamepadInput.getAxis(1),this.gamepadInput.getAxis(0));
+    this.dir = Math.atan2(this.moveY, this.moveX);
 
     if(this.platform) {
-      this.velocity.x = this.gamepadInput.getAxis(0) * 200;
-      this.velocity.y = this.gamepadInput.getAxis(1) * 200;
+      this.velocity.x = this.moveX * 200;
+      this.velocity.y = this.moveY * 200;
     }
 
     this.velocity.z -= 9.8;

@@ -9,8 +9,7 @@ class GamepadInput {
     axes: {}
   };
 
-  constructor(readonly gamepadNumber: number) {
-  }
+  constructor(readonly gamepadNumber: number) {}
 
   tick() {
     const gamepad = this.gamepad;
@@ -70,15 +69,15 @@ class GamepadInput {
 
 }
 
-interface IHaveBindings {
-  gamepadInput?: GamepadInput;
-}
+type InitializedIHaveBindings = {
+  doButtonBindings: (input: GamepadInput) => void;
+  doAxisBindings: (input: GamepadInput) => void;
 
-type InitializedIHaveBindings = IHaveBindings&{
-  __doBindings: () => void;
+  __bindingsInitialized: true;
 
   __onGamepadPress: Array<{button: number, action: () => void}>;
   __onGamepadRelease: Array<{button: number, action: () => void}>;
+  __axisBindings: Array<{axis: number, bindTo: string}>;
 }
 
 type GamepadSnapshot = {
@@ -86,27 +85,49 @@ type GamepadSnapshot = {
   axes: {[key: number]: number}
 };
 
-function bindTo(type: 'press' | 'release', {button}: BindingConfig) {
-  return function<T extends IHaveBindings>(target: T, propertyKey: keyof T, descriptor: PropertyDescriptor) {
-    const initializedTarget = initializeTarget(target);
-    initializedTarget.__onGamepadPress.push({button, action: target[propertyKey]});
+function bindTo(type: 'press' | 'release', {button}: BindingConfig): MethodDecorator {
+  return function<T>(target: T, propertyKey: keyof T, descriptor: PropertyDescriptor) {
+    const initializedTarget = initializeBindingTarget(target);
+    initializedTarget.__onGamepadPress.push({button, action: (target as any)[propertyKey]});
+  }
+}
+
+function bindToAxis(axis: number): PropertyDecorator {
+  return function<T>(target: T, propertyKey: keyof T) {
+    const initializedTarget = initializeBindingTarget(target);
+    initializedTarget.__axisBindings.push({axis, bindTo: propertyKey});
+  }
+}
+
+function initializeBindingTarget<T>(target: T): T&InitializedIHaveBindings {
+  const t = target as any;
+  if(t.__bindingsInitialized) return t;
+
+  if('doButtonBindings' in t || 'doAxisBindings' in t) {
+    throw new Error(`Initializing bindings for ${t.constructor.name} would replace existing methods?`);
   }
 
-  function initializeTarget<T extends IHaveBindings>(target: T): T&InitializedIHaveBindings {
-    const t = target as any;
-    t.__onGamepadPress = t.__onGamepadPress || [];
-    t.__bindingsInitialized = true;
-    t.__doBindings = t.__doBindings || doBindings
-    return t;
+  t.doButtonBindings = doButtonBindings;
+  t.doAxisBindings = doAxisBindings;
+
+  t.__bindingsInitialized = true;
+  t.__onGamepadPress = [];
+  t.__onGamepadRelease = [];
+  t.__axisBindings = [];
+
+  return t;
+
+  function doButtonBindings(this: InitializedIHaveBindings, input: GamepadInput) {
+    for(const b of this.__onGamepadPress) {
+      if(input.wasPressed(b.button)) b.action.call(this);
+    }
   }
 
-  function doBindings(this: InitializedIHaveBindings) {
-    if(this.gamepadInput) {
-      this.gamepadInput.tick();
+  function doAxisBindings(this: InitializedIHaveBindings, input: GamepadInput) {
+    if(!input) return;
 
-      for(const b of this.__onGamepadPress) {
-        if(this.gamepadInput.wasPressed(b.button)) b.action.call(this);
-      }
+    for(const b of this.__axisBindings) {
+      (this as any)[b.bindTo] = input.getAxis(b.axis);
     }
   }
 }
@@ -114,5 +135,5 @@ function bindTo(type: 'press' | 'release', {button}: BindingConfig) {
 type BindingConfig = {button: number};
 
 function hasBindings(bindable: any): bindable is InitializedIHaveBindings{
-  return !!bindable.__doBindings;
+  return !!bindable.__bindingsInitialized;
 }
