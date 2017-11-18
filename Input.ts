@@ -88,7 +88,12 @@ type GamepadSnapshot = {
 function bindTo(type: 'press' | 'release', {button}: BindingConfig): MethodDecorator {
   return function<T>(target: T, propertyKey: keyof T, descriptor: PropertyDescriptor) {
     const initializedTarget = initializeBindingTarget(target);
-    initializedTarget.__onGamepadPress.push({button, action: (target as any)[propertyKey]});
+    if(type === 'press') {
+      initializedTarget.__onGamepadPress.push({button, action: (target as any)[propertyKey]});
+    }
+    else {
+      initializedTarget.__onGamepadRelease.push({button, action: (target as any)[propertyKey]});
+    }
   }
 }
 
@@ -120,6 +125,10 @@ function initializeBindingTarget<T>(target: T): T&InitializedIHaveBindings {
   function doButtonBindings(this: InitializedIHaveBindings, input: GamepadInput) {
     for(const b of this.__onGamepadPress) {
       if(input.wasPressed(b.button)) b.action.call(this);
+    }
+
+    for(const b of this.__onGamepadRelease) {
+      if(input.wasReleased(b.button)) b.action.call(this);
     }
   }
 
