@@ -29,7 +29,6 @@ class Game {
   }
 
   add(thing: GameObject) {
-    console.log('adding ' + thing.constructor.name);
     this.objects.push(thing);
 
     if(isQueryable(thing.constructor)) {
@@ -38,7 +37,6 @@ class Game {
   }
 
   remove(thing: GameObject) {
-    console.log('removing ' + thing.constructor.name);
     this.objects.splice(this.objects.indexOf(thing), 1);
 
     if(isQueryable(thing.constructor)) {
