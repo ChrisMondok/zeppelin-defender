@@ -24,14 +24,8 @@ class Player implements GameObject {
   }
 
   tick(dt: number) {
-    const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
-
-    if(Math.max(Math.abs(this.moveX), this.moveY) > 0)
+    if(Math.max(Math.abs(this.moveX), Math.abs(this.moveY)) > 0) {
       this.direction = Math.atan2(this.moveY, this.moveX);
-
-    if(this.platform) {
-      this.velocity.x = this.moveX * 200;
-      this.velocity.y = this.moveY * 200;
     }
 
     this.velocity.z -= 9.8;
@@ -40,29 +34,8 @@ class Player implements GameObject {
     this.y += this.velocity.y * dt/1000;
     this.z += this.velocity.z * dt/1000;
 
-    const dv = {
-      x: this.velocity.x - oldVelocity.x,
-      y: this.velocity.y - oldVelocity.y,
-    };
+    this.doPlatformInteraction();
 
-    if(this.platform) {
-      if(!this.platform.occludes(this)) {
-        this.removeFromPlatform();
-      } else {
-        this.platform.velocity.x += dv.x/-5;
-        this.platform.velocity.y += dv.y/-5;
-        if(this.z <= this.platform.z + 1) {
-          this.velocity.z = Math.max(0, this.velocity.z);
-          this.z = this.platform.z + 1;
-        }
-      }
-    } else {
-      const occludingPlatforms = this.game.getObjectsOfType(Platform).filter(p => p.occludes(this));
-      if(occludingPlatforms[0]) {
-        this.platform = occludingPlatforms[0];
-        occludingPlatforms[0].addContents(this);
-      }
-    }
 
     if(this.z < -200) {
       this.destroy();
@@ -118,6 +91,37 @@ class Player implements GameObject {
   destroy() {
     this.removeFromPlatform();
     this.game.remove(this);
+  }
+
+  private doPlatformInteraction() {
+    if(this.platform) {
+      if(!this.platform.occludes(this)) {
+        this.removeFromPlatform();
+      } else {
+        const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
+
+        this.velocity.x = this.moveX * 200;
+        this.velocity.y = this.moveY * 200;
+
+        const dv = {
+          x: this.velocity.x - oldVelocity.x,
+          y: this.velocity.y - oldVelocity.y,
+        };
+
+        this.platform.velocity.x += dv.x/-5;
+        this.platform.velocity.y += dv.y/-5;
+        if(this.z <= this.platform.z + 1) {
+          this.velocity.z = Math.max(0, this.velocity.z);
+          this.z = this.platform.z + 1;
+        }
+      }
+    } else {
+      const occludingPlatforms = this.game.getObjectsOfType(Platform).filter(p => p.occludes(this));
+      if(occludingPlatforms[0]) {
+        this.platform = occludingPlatforms[0];
+        occludingPlatforms[0].addContents(this);
+      }
+    }
   }
 
   private removeFromPlatform() {
