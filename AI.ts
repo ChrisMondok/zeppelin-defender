@@ -47,7 +47,7 @@ class WaitMove implements Move {
     this.waitSpot = { x: this.owner.x, y: this.owner.y };
   }
 
-  step(dt: number) {
+  step(dt: number) : AIDirective {
     if(!this.hasStarted)
       this.init();
 
@@ -71,6 +71,41 @@ class DestinationMove implements Move {
   }
 }
 
+class AimMove extends WaitMove {
+  constructor(readonly owner: GameObject, public time: number, readonly target: string) {
+    super(owner, time);
+  }
+
+  step(dt: number) {
+    const directive = super.step(dt);
+    directive.aimTarget = this.getAimTarget();
+    return directive;
+  }
+
+  private getAimTarget() : Point|undefined {
+    switch (this.target) {
+      case 'player':
+        const player = this.owner.game.getObjectsOfType(Player)[0];
+        return player ? { x: player.x, y: player.y } : undefined;
+      default:
+        return undefined;
+    }
+  }
+
+}
+
+class FireMove implements Move {
+  public isComplete = false;
+  constructor(readonly owner : GameObject) {}
+
+  step(dt : number) {
+    this.isComplete = true;
+    return { aimTarget: this.owner.currentAimTarget, shouldFire: true }
+  }
+}
+
 interface AIDirective {
   destination? : Point;
+  aimTarget? : Point;
+  shouldFire? : boolean;
 }

@@ -5,7 +5,8 @@ class SlidingThrowingEnemy extends GameObject {
   xpid: PID;
   ypid: PID;
   target = {x:300, y:200};
-  currentTarget?: Point;
+  currentDestination?: Point;
+  currentAimTarget?: Point;
   ai: AI;
   private velocity = {x:0, y:0};
   private acceleration = {x:0, y:0};
@@ -23,17 +24,30 @@ class SlidingThrowingEnemy extends GameObject {
       new WaitMove(this, 500),
       new DestinationMove(this, { x: 100, y: 100 }),
       new WaitMove(this, 500),
-      new DestinationMove(this, { x: 300, y: 300 }),
+      new AimMove(this, 3000, 'player'),
+      new FireMove(this),
+      new WaitMove(this, 2000),
+      new DestinationMove(this, { x: 100, y: 300 }),
+      new AimMove(this, 1000, 'player'),
+      new FireMove(this),
+      new WaitMove(this, 2000),
+      new DestinationMove(this, { x: 400, y: 300 }),
     ]);
   }
 
   tick(dt: number) {
     const directive = this.ai.step(dt);
-    this.currentTarget = directive.destination;
-    if(this.currentTarget) {
-      this.seekTarget(this.currentTarget, dt)
+    this.currentDestination = directive.destination;
+    if(this.currentDestination) {
+      this.seekTarget(this.currentDestination, dt)
     }
     this.applyAccelerationAndVelocity();
+
+    this.currentAimTarget = directive.aimTarget || this.currentAimTarget;
+    if(directive.shouldFire) {
+      this.fire();
+      this.currentAimTarget = undefined;
+    }
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -41,6 +55,13 @@ class SlidingThrowingEnemy extends GameObject {
     context.fillStyle = 'green';
     context.arc(this.x, this.y, 25, 0, 2 * Math.PI);
     context.fill();
+
+    if(this.currentAimTarget) {
+      context.moveTo(this.x, this.y);
+      context.lineTo(this.currentAimTarget.x, this.currentAimTarget.y);
+      context.fillStyle = 'purple';
+      context.stroke();
+    }
   }
 
   private applyAccelerationAndVelocity() {
@@ -52,7 +73,7 @@ class SlidingThrowingEnemy extends GameObject {
   }
 
   private findTarget() {
-    this.currentTarget = Object.create(this.target);
+    this.currentDestination = Object.create(this.target);
   }
 
   private seekTarget(target: Point, dt: number) {
@@ -63,5 +84,11 @@ class SlidingThrowingEnemy extends GameObject {
 
     this.acceleration = clamp({x:accx, y:accy}, this.MAX_ACCELERATION);
   }
+
+  private fire() {
+    if(this.currentAimTarget)
+      new Projectile(this.game, this.x, this.y, direction(this, this.currentAimTarget));
+  }
+
 
 }
