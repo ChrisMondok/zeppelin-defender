@@ -41,6 +41,8 @@ class Player extends GameObject {
 
     this.doPlatformInteraction();
 
+    this.doCableInteraction();
+
     if(this.shield) {
       this.shield.x = this.x + (1.1 * this.radius + this.shield.thickness/2) * Math.cos(this.direction);
       this.shield.y = this.y + (1.1 * this.radius + this.shield.thickness/2) * Math.sin(this.direction);
@@ -143,6 +145,18 @@ class Player extends GameObject {
       if(occludingPlatforms[0]) {
         this.platform = occludingPlatforms[0];
         occludingPlatforms[0].addContents(this);
+      }
+    }
+  }
+
+  private doCableInteraction() {
+    for(const cable of this.game.getObjectsOfType(Cable)) {
+      const distSquared = distanceSquared(this, cable);
+      if(distSquared < Math.pow(this.radius + cable.radius, 2)) {
+        const dir = direction(cable, this);
+        const dist = this.radius + cable.radius;
+        this.x = cable.x + dist * Math.cos(dir);
+        this.y = cable.y + dist * Math.sin(dir);
       }
     }
   }

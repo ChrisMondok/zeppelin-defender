@@ -1,5 +1,7 @@
+/// <reference path="Game.ts"/>
 /// <reference path="GameObject.ts"/>
 
+@queryable
 class Cable extends GameObject {
   radius = 8;
 
