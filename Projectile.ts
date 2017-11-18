@@ -7,6 +7,10 @@ class Projectile extends GameObject {
 
   constructor(readonly game: Game, public x: number, public y: number, public direction: number) {
     super(game);
+    const sound = audioContext.createBufferSource();
+    sound.buffer = Projectile.fireSoundBuffer;
+    sound.connect(audioContext.destination);
+    sound.start(0);
   }
 
   tick(dt: number) {
@@ -22,4 +26,7 @@ class Projectile extends GameObject {
     context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
     context.fill();
   }
+
+  @fillWithAudioBuffer('sounds/pew.wav')
+  private static fireSoundBuffer: AudioBuffer;
 }

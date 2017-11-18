@@ -18,6 +18,8 @@ class Player extends GameObject {
 
   shield: Shield|null = null;
 
+  readonly deathSound: AudioBufferSourceNode;
+
   constructor(readonly game: Game) {
     super(game);
     // Whoa this seems fragile.
@@ -26,6 +28,10 @@ class Player extends GameObject {
     this.y = this.platform.y;
     this.z = this.platform.z + 1;
     this.platform.addContents(this);
+
+    this.deathSound = audioContext.createBufferSource();
+    this.deathSound.buffer = Player.deathSoundBuffer;
+    this.deathSound.connect(audioContext.destination);
   }
 
   tick(dt: number) {
@@ -120,6 +126,9 @@ class Player extends GameObject {
     this.game.remove(this);
   }
 
+  @fillWithAudioBuffer('sounds/ohno.wav')
+  private static deathSoundBuffer: AudioBuffer;
+
   private doPlatformInteraction() {
     if(this.platform) {
       if(!this.platform.occludes(this)) {
@@ -169,7 +178,7 @@ class Player extends GameObject {
       if(projectile.team === 'PLAYER') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
         this.destroy();
-        alert('you ded');
+        this.deathSound.start(0);
       }
     }
   }
