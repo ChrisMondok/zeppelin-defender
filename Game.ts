@@ -37,11 +37,21 @@ class Game {
   }
 
   remove(thing: GameObject) {
-    this.objects.splice(this.objects.indexOf(thing), 1);
+    const index = this.objects.indexOf(thing);
+    if(index === -1) {
+      console.error("Trying to remove a thing we don't know about!");
+      return;
+    }
+    this.objects.splice(index, 1);
 
     if(isQueryable(thing.constructor)) {
       const queryList = this.objectsByKey[thing.constructor.__queryKey];
-      queryList.splice(queryList.indexOf(thing), 1);
+      const index = queryList.indexOf(thing);
+      if(index === -1) {
+        console.error("Trying to remove a thing from a query list it's not in!");
+        return;
+      }
+      queryList.splice(index, 1);
     }
   }
 
