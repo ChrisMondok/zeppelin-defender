@@ -1,7 +1,7 @@
+/// <reference path="GameObject.ts"/>
+
 @queryable
-class SlidingThrowingEnemy implements GameObject {
-  x: number;
-  y: number;
+class SlidingThrowingEnemy extends GameObject {
   xpid: PID;
   ypid: PID;
   target = {x:300, y:200};
@@ -12,7 +12,8 @@ class SlidingThrowingEnemy implements GameObject {
   readonly MAX_ACCELERATION = 2;
   z = 2;
   
-  constructor(readonly game: Game, readonly center: Point) {
+  constructor(game: Game, readonly center: Point) {
+    super(game);
     this.x = this.center.x;
     this.y = this.center.y;
     this.xpid = new PID(0.12,0.00003,2);

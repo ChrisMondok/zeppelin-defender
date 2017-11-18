@@ -16,11 +16,11 @@ class Game {
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
-    this.add(new Platform(this, {x: canvas.width / 4, y: canvas.height/2}));
-    this.add(new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2}));
-    this.add(new SlidingThrowingEnemy(this, {x: 300, y: 200}));
-    this.add(new Target(this, (canvas.width / 2), (canvas.height/2)));
-    this.add(new Player(this));
+    new Platform(this, {x: canvas.width / 4, y: canvas.height/2});
+    new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2});
+    new SlidingThrowingEnemy(this, {x: 300, y: 200});
+    new Target(this, (canvas.width / 2), (canvas.height/2));
+    new Player(this);
   }
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
@@ -59,7 +59,7 @@ class Game {
     }
 
     if(!this.getObjectsOfType(Player).length) {
-      this.add(new Player(this));
+      new Player(this);
     }
 
     this.lastTick = ts;

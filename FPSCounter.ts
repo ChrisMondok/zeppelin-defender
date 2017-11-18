@@ -1,12 +1,12 @@
-class FPSCounter implements GameObject {
+/// <reference path="GameObject.ts"/>
+
+class FPSCounter extends GameObject {
   x = 10;
   y = 10;
   z = Infinity;
 
   private dt: number = 0;
 
-  constructor(readonly game: Game){}
-  
   tick(dt: number) {
     this.dt = dt;
   }

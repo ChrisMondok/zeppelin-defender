@@ -1,12 +1,14 @@
 @queryable
-class Target implements GameObject {
+class Target extends GameObject {
   readonly velocity = {x: 0, y: .5};
   readonly width = 20;
   readonly height = 20;
   z = 0;
   hit = false;
 
-  constructor(readonly game : Game, public x: number, public y: number){}
+  constructor(readonly game : Game, public x: number, public y: number){
+    super(game);
+  }
 
   tick(dt: number) {
     var bullets = this.game.getObjectsOfType(Projectile);
@@ -16,7 +18,7 @@ class Target implements GameObject {
       }
     });
     if(this.hit){
-      this.game.remove(this);
+      this.destroy();
     }
     this.x += this.velocity.x;
     this.y += this.velocity.y;

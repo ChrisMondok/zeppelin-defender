@@ -1,8 +1,10 @@
 @queryable
-class Projectile implements GameObject {
+class Projectile extends GameObject {
   z = 0;
   lifetime = 20;
-  constructor(readonly game: Game, public x: number, public y: number, public dir: number) {}
+  constructor(readonly game: Game, public x: number, public y: number, public dir: number) {
+    super(game);
+  }
 
   tick(dt: number) {
     this.x += Math.cos(this.dir) * 20;

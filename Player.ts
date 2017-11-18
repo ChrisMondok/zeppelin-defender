@@ -1,7 +1,7 @@
+/// <reference path="GameObject.ts"/>
+
 @queryable
-class Player implements GameObject {
-  x: number;
-  y: number;
+class Player extends GameObject {
   readonly velocity = {x: 0, y: 0, z: 0};
   z = 0;
   direction = 0;
@@ -15,6 +15,7 @@ class Player implements GameObject {
   platform: Platform|null;
 
   constructor(readonly game: Game) {
+    super(game);
     // Whoa this seems fragile.
     this.platform = game.getObjectsOfType(Platform)[0];
     this.x = this.platform.x;
@@ -76,7 +77,7 @@ class Player implements GameObject {
 
   @bindTo('press', {button: 2})
   fireProjectile() {
-    this.game.add(new Projectile(this.game, this.x, this.y, this.direction));
+    new Projectile(this.game, this.x, this.y, this.direction);
   }
 
   @bindTo('press', {button: 0})

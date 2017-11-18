@@ -1,7 +1,7 @@
 window.addEventListener('load', function() {
   let game = (window as any).game = new Game();
 
-  game.add(new FPSCounter(game));
+  const counter = new FPSCounter(game);
 
   requestAnimationFrame(draw);
 
@@ -11,4 +11,3 @@ window.addEventListener('load', function() {
     requestAnimationFrame(draw);
   }
 });
-

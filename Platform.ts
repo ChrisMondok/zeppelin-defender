@@ -1,7 +1,7 @@
+/// <reference path="GameObject.ts"/>
+
 @queryable
-class Platform implements GameObject {
-  x: number;
-  y: number;
+class Platform extends GameObject {
   readonly velocity = {x: 0, y: 0};
   z = -1;
 
@@ -13,7 +13,8 @@ class Platform implements GameObject {
 
   readonly contents: GameObject[] = [];
 
-  constructor(readonly game: Game, readonly center: Point) {
+  constructor(game: Game, readonly center: Point) {
+    super(game);
     this.x = this.center.x - 10;
     this.y = this.center.y - 20;
   }
