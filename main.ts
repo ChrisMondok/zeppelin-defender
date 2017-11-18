@@ -38,3 +38,15 @@ function fillWithAudioBuffer(url: string): PropertyDecorator {
       }));
   }
 }
+
+function fillWithImage(url: string): PropertyDecorator {
+  return function(target: any, propertyKey: string) {
+    const promise = new Promise<void>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve();
+      image.src = url;
+      target[propertyKey] = image;
+    });
+    addAsset(promise);
+  }
+}
