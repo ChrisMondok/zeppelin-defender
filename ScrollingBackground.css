@@ -1,6 +1,6 @@
 
 canvas {
-background: gray url(grass.png) repeat 0 0;
+background: gray url(grass.jpeg) repeat 0 0;
   -webkit-animation: slide 10s linear infinite;
 }
 
