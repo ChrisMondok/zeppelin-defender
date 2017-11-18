@@ -4,7 +4,7 @@
 class SlidingThrowingEnemy extends GameObject {
   xpid: PID;
   ypid: PID;
-  target = {x:300, y:200};
+  target: Point;
   currentDestination?: Point;
   currentAimTarget?: Point;
   ai: AI;
@@ -27,11 +27,11 @@ class SlidingThrowingEnemy extends GameObject {
       new AimMove(this, 3000, 'player'),
       new FireMove(this),
       new WaitMove(this, 2000),
-      new DestinationMove(this, { x: 100, y: 300 }),
+      new DestinationMove(this, { x: 50, y: 400 }),
       new AimMove(this, 1000, 'cable'),
       new FireMove(this),
       new WaitMove(this, 2000),
-      new DestinationMove(this, { x: 400, y: 300 }),
+      new DestinationMove(this, { x: 400, y: 400 }),
     ]);
   }
 
