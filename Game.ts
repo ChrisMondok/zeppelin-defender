@@ -100,7 +100,6 @@ let __nextQueryKey = 0;
 type QueryableType = Function&{__queryKey: number};
 
 function queryable(constructor: Function) {
-  console.log('making it queryable');
   (constructor as QueryableType).__queryKey = __nextQueryKey++;
   Game.queryableTypes.push(constructor as QueryableType);
 }
