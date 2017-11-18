@@ -1,8 +1,7 @@
 @queryable
 class Projectile extends GameObject {
   z = 0;
-  lifetime = 20;
-  speed = 20;
+  speed = 200;
 
   team: 'PLAYER' | 'ENEMY' = 'ENEMY';
 
@@ -11,12 +10,10 @@ class Projectile extends GameObject {
   }
 
   tick(dt: number) {
-    this.x += Math.cos(this.direction) * this.speed;
-    this.y += Math.sin(this.direction) * this.speed;
-    this.lifetime--;
-    if(this.lifetime < 0) {
-      this.game.remove(this);
-    }
+    this.x += Math.cos(this.direction) * this.speed * dt / 1000;
+    this.y += Math.sin(this.direction) * this.speed * dt / 1000;
+
+    if(!this.game.isInBounds(this)) this.destroy();
   }
 
   draw(context: CanvasRenderingContext2D) {

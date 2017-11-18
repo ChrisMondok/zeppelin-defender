@@ -83,7 +83,10 @@ class Game {
       o.draw(this.context);
       this.context.restore();
     }
+  }
 
+  isInBounds(point: Point) {
+    return point.x >= 0 && point.y >= 0 && point.x <= this.context.canvas.width && point.y <= this.context.canvas.height;
   }
 }
 
