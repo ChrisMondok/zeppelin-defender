@@ -26,11 +26,10 @@ class Player extends GameObject {
     this.y = this.platform.y;
     this.z = this.platform.z + 1;
     this.platform.addContents(this);
-    this.shield = new Shield(this.game);
   }
 
   tick(dt: number) {
-    if(Math.max(Math.abs(this.moveX), Math.abs(this.moveY)) > 0) {
+    if(!this.shield && Math.max(Math.abs(this.moveX), Math.abs(this.moveY)) > 0) {
       this.direction = Math.atan2(this.moveY, this.moveX);
     }
 
@@ -98,6 +97,18 @@ class Player extends GameObject {
     this.removeFromPlatform();
   }
 
+  @bindTo('press', {button: 1})
+  block() {
+    if(this.shield) return;
+    this.shield = new Shield(this.game);
+  }
+
+  @bindTo('release', {button: 1})
+  stopBlocking() {
+    if(this.shield) this.shield.destroy();
+    this.shield = null;
+  }
+
   destroy() {
     if(this.shield) this.shield.destroy();
     this.removeFromPlatform();
@@ -111,8 +122,9 @@ class Player extends GameObject {
       } else {
         const oldVelocity = {x: this.velocity.x, y: this.velocity.y};
 
-        this.velocity.x = this.moveX * 200;
-        this.velocity.y = this.moveY * 200;
+        const walkSpeed = this.shield ? 100 : 200;
+        this.velocity.x = this.moveX * walkSpeed;
+        this.velocity.y = this.moveY * walkSpeed;
 
         const dv = {
           x: this.velocity.x - oldVelocity.x,
