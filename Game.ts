@@ -21,6 +21,11 @@ class Game {
     new SlidingThrowingEnemy(this, {x: 300, y: 200});
     new Target(this, (canvas.width / 2), (canvas.height/2));
     new Player(this);
+
+    setInterval(() => {
+      const proj = new Projectile(this, canvas.width, canvas.height/2, Math.PI);
+      proj.speed = 200;
+    }, 2000);
   }
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
