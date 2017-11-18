@@ -95,6 +95,10 @@ class AimMove extends WaitMove {
     switch (this.target) {
       case 'player':
         return this.owner.game.getObjectsOfType(Player)[0];
+      case 'cable':
+        const cables = this.owner.game.getObjectsOfType(Cable);
+        const closestCable = cables.sort((a, b) => distanceSquared(this.owner, a) - distanceSquared(this.owner, b))[0];
+        return closestCable || undefined;
       default:
         return undefined;
     }

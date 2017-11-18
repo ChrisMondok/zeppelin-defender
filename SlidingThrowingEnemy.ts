@@ -28,7 +28,7 @@ class SlidingThrowingEnemy extends GameObject {
       new FireMove(this),
       new WaitMove(this, 2000),
       new DestinationMove(this, { x: 100, y: 300 }),
-      new AimMove(this, 1000, 'player'),
+      new AimMove(this, 1000, 'cable'),
       new FireMove(this),
       new WaitMove(this, 2000),
       new DestinationMove(this, { x: 400, y: 300 }),
