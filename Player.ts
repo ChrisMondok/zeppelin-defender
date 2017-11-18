@@ -89,7 +89,8 @@ class Player extends GameObject {
 
   @bindTo('press', {button: 2})
   fireProjectile() {
-    new Projectile(this.game, this.x, this.y, this.direction);
+    const projectile = new Projectile(this.game, this.x, this.y, this.direction);
+    projectile.team = 'PLAYER';
   }
 
   @bindTo('press', {button: 0})
@@ -165,6 +166,7 @@ class Player extends GameObject {
 
   private doBulletInteraction() {
     for(const projectile of this.game.getObjectsOfType(Projectile)) {
+      if(projectile.team === 'PLAYER') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
         this.destroy();
         alert('you ded');
