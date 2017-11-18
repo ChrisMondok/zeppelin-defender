@@ -43,6 +43,8 @@ class Player extends GameObject {
 
     this.doCableInteraction();
 
+    this.doBulletInteraction();
+
     if(this.shield) {
       this.shield.x = this.x + (1.1 * this.radius + this.shield.thickness/2) * Math.cos(this.direction);
       this.shield.y = this.y + (1.1 * this.radius + this.shield.thickness/2) * Math.sin(this.direction);
@@ -157,6 +159,15 @@ class Player extends GameObject {
         const dist = this.radius + cable.radius;
         this.x = cable.x + dist * Math.cos(dir);
         this.y = cable.y + dist * Math.sin(dir);
+      }
+    }
+  }
+
+  private doBulletInteraction() {
+    for(const projectile of this.game.getObjectsOfType(Projectile)) {
+      if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
+        this.destroy();
+        alert('you ded');
       }
     }
   }
