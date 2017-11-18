@@ -14,6 +14,10 @@ class Player extends GameObject {
 
   platform: Platform|null;
 
+  radius = 12;
+
+  shield: Shield|null = null;
+
   constructor(readonly game: Game) {
     super(game);
     // Whoa this seems fragile.
@@ -22,6 +26,7 @@ class Player extends GameObject {
     this.y = this.platform.y;
     this.z = this.platform.z + 1;
     this.platform.addContents(this);
+    this.shield = new Shield(this.game);
   }
 
   tick(dt: number) {
@@ -37,6 +42,11 @@ class Player extends GameObject {
 
     this.doPlatformInteraction();
 
+    if(this.shield) {
+      this.shield.x = this.x + (1.1 * this.radius + this.shield.thickness/2) * Math.cos(this.direction);
+      this.shield.y = this.y + (1.1 * this.radius + this.shield.thickness/2) * Math.sin(this.direction);
+      this.shield.direction = this.direction;
+    }
 
     if(this.z < -200) {
       this.destroy();
@@ -44,7 +54,6 @@ class Player extends GameObject {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    const radius = 12;
     //draw shadow
     context.save();
     context.beginPath();
@@ -54,7 +63,7 @@ class Player extends GameObject {
     context.clip();
     context.beginPath();
     context.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    context.arc(this.x, this.y, radius, 0, 2 * Math.PI);
+    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     context.fill();
     context.restore();
 
@@ -65,13 +74,13 @@ class Player extends GameObject {
     context.rotate(this.direction);
     context.beginPath();
     context.fillStyle = 'red';
-    context.arc(0, 0, radius, 0, 2 * Math.PI);
+    context.arc(0, 0, this.radius, 0, 2 * Math.PI);
     context.fill();
 
     context.beginPath();
     context.strokeStyle = 'black';
     context.moveTo(0, 0);
-    context.lineTo(radius, 0);
+    context.lineTo(this.radius, 0);
     context.stroke()
   }
 
@@ -90,6 +99,7 @@ class Player extends GameObject {
   }
 
   destroy() {
+    if(this.shield) this.shield.destroy();
     this.removeFromPlatform();
     this.game.remove(this);
   }
@@ -131,4 +141,3 @@ class Player extends GameObject {
     this.platform = null;
   }
 }
-
