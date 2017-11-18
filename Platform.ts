@@ -13,10 +13,17 @@ class Platform extends GameObject {
 
   readonly contents: GameObject[] = [];
 
+  readonly cables: Cable[] = [];
+
   constructor(game: Game, readonly center: Point) {
     super(game);
     this.x = this.center.x - 10;
     this.y = this.center.y - 20;
+
+    this.cables.push(new Cable(this, {x: this.width * -0.2, y: this.height * -0.2}));
+    this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * -0.2}));
+    this.cables.push(new Cable(this, {x: this.width * -0.2, y: this.height * 0.2}));
+    this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * 0.2}));
   }
 
   draw(context: CanvasRenderingContext2D) {
