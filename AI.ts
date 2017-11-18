@@ -37,7 +37,7 @@ interface Move {
 
 class WaitMove implements Move {
   public isComplete = false;
-  private hasStarted = false;
+  hasStarted = false;
   private waitSpot: Point;
   constructor(readonly owner: GameObject, public time: number) {
   }
@@ -72,21 +72,29 @@ class DestinationMove implements Move {
 }
 
 class AimMove extends WaitMove {
+  aimTarget?: GameObject;
   constructor(readonly owner: GameObject, public time: number, readonly target: string) {
     super(owner, time);
   }
 
   step(dt: number) {
+    if(!this.hasStarted)
+      this.init();
     const directive = super.step(dt);
-    directive.aimTarget = this.getAimTarget();
+    if(this.aimTarget)
+      directive.aimTarget = {x: this.aimTarget.x, y: this.aimTarget.y};
     return directive;
   }
 
-  private getAimTarget() : Point|undefined {
+  init() {
+    super.init();
+    this.aimTarget = this.getAimTarget();
+  }
+
+  private getAimTarget() : GameObject|undefined {
     switch (this.target) {
       case 'player':
-        const player = this.owner.game.getObjectsOfType(Player)[0];
-        return player ? { x: player.x, y: player.y } : undefined;
+        return this.owner.game.getObjectsOfType(Player)[0];
       default:
         return undefined;
     }
@@ -96,7 +104,7 @@ class AimMove extends WaitMove {
 
 class FireMove implements Move {
   public isComplete = false;
-  constructor(readonly owner : GameObject) {}
+  constructor(readonly owner : SlidingThrowingEnemy) {}
 
   step(dt : number) {
     this.isComplete = true;
