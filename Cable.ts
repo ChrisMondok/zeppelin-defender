@@ -14,6 +14,12 @@ class Cable extends GameObject {
   tick() {
     this.x = this.platform.x + this.offset.x;
     this.y = this.platform.y + this.offset.y;
+
+    for(const projectile of this.game.getObjectsOfType(Projectile)) {
+      if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
+        this.destroy();
+      }
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
