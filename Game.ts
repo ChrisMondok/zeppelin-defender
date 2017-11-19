@@ -11,6 +11,9 @@ class Game {
 
   private readonly gamepadInput = new GamepadInput(0);
 
+  @fillWithAudioBuffer('sounds/wind.ogg')
+  private static windSoundBuffer: AudioBuffer;
+
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByKey[(type as any).__queryKey] = [];
 
@@ -21,6 +24,11 @@ class Game {
     new SlidingThrowingEnemy(this, {x: 300, y: 50});
     new Target(this, (canvas.width / 2), (canvas.height/2));
     new Player(this);
+
+    const sound = audioContext.createBufferSource();
+    sound.buffer = Game.windSoundBuffer;
+    sound.connect(audioContext.destination);
+    sound.start(0);
   }
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
