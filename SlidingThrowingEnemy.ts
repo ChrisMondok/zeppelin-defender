@@ -13,8 +13,8 @@ class SlidingThrowingEnemy extends GameObject {
   readonly MAX_VELOCITY = 5;
   readonly MAX_ACCELERATION = 2;
   z = 2;
+  radius = 25;
 
-  
   constructor(game: Game, readonly center: Point) {
     super(game);
     this.x = this.center.x;
@@ -49,12 +49,14 @@ class SlidingThrowingEnemy extends GameObject {
       this.fire();
       this.currentAimTarget = undefined;
     }
+
+    this.doProjectileInteraction();
   }
 
   draw(context: CanvasRenderingContext2D) {
     context.beginPath();
     context.fillStyle = 'green';
-    context.arc(this.x, this.y, 25, 0, 2 * Math.PI);
+    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     context.fill();
 
     if(this.currentAimTarget) {
@@ -91,5 +93,10 @@ class SlidingThrowingEnemy extends GameObject {
       new Buzzsaw(this.game, this.x, this.y, direction(this, this.currentAimTarget));
   }
 
-
+  private doProjectileInteraction() {
+    for(const projectile of this.game.getObjectsOfType(Projectile)) {
+      if(projectile.team === 'ENEMY') continue;
+      if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) this.destroy();
+    }
+  }
 }
