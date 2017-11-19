@@ -5,7 +5,7 @@ class Game {
 
   private readonly objects: GameObject[] = [];
 
-  private readonly objectsByKey: {[key: number]: GameObject[]} = {};
+  private readonly objectsByType: {[key: number]: GameObject[]} = {};
 
   private lastTick: number|null = null;
 
@@ -15,7 +15,7 @@ class Game {
   private static windSoundBuffer: AudioBuffer;
 
   constructor () {
-    for(const type of Game.queryableTypes) this.objectsByKey[(type as any).__queryKey] = [];
+    for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
@@ -33,14 +33,17 @@ class Game {
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
     if(!isQueryable(type)) throw new Error(`Type ${type.name} is not queryable. Add @queryable to its declaration.`);
-    return this.objectsByKey[type.__queryKey] as T[];
+    return this.objectsByType[type.__queryKey] as T[];
   }
 
   add(thing: GameObject) {
     this.objects.push(thing);
 
     if(isQueryable(thing.constructor)) {
-      this.objectsByKey[thing.constructor.__queryKey].push(thing);
+      for(const queryableType of Game.queryableTypes) {
+        if(thing instanceof queryableType)
+          this.objectsByType[queryableType.__queryKey].push(thing);
+      }
     }
   }
 
@@ -53,13 +56,18 @@ class Game {
     this.objects.splice(index, 1);
 
     if(isQueryable(thing.constructor)) {
-      const queryList = this.objectsByKey[thing.constructor.__queryKey];
-      const index = queryList.indexOf(thing);
-      if(index === -1) {
-        console.error("Trying to remove a thing from a query list it's not in!");
-        return;
+      for(const queryableType of Game.queryableTypes) {
+        if(!(thing instanceof queryableType)) continue;
+
+        const queryList = this.objectsByType[queryableType.__queryKey];
+
+        const index = queryList.indexOf(thing);
+        if(index === -1) {
+          console.error("Trying to remove a thing from a query list it's not in!");
+          return;
+        }
+        queryList.splice(index, 1);
       }
-      queryList.splice(index, 1);
     }
   }
 
