@@ -67,7 +67,7 @@ class Player extends GameObject {
     context.save();
     context.beginPath();
     for(let p of this.game.getObjectsOfType(Platform)) {
-      if(p.z < this.z) continue;
+      if(p.z > this.z) continue;
       context.rect(p.x - p.width/2, p.y - p.height/2, p.width, p.height);
     }
     context.clip();
