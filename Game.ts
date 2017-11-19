@@ -19,8 +19,8 @@ class Game {
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
-    new Platform(this, {x: canvas.width / 4, y: canvas.height/2});
-    new Platform(this, {x: canvas.width / 4 + 300, y: canvas.height/2});
+    new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
+    new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
     new SlidingThrowingEnemy(this, {x: 300, y: 50});
     new Target(this, (canvas.width / 2), (canvas.height/2));
     new Player(this);

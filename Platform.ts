@@ -8,8 +8,8 @@ class Platform extends GameObject {
   springConstant = 0.1;
   damping = 0.01;
 
-  width = 200;
-  height = 200;
+  width = 300;
+  height = 400;
 
   readonly contents: GameObject[] = [];
 

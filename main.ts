@@ -6,6 +6,7 @@ function addAsset(asset: Promise<void>) {
 }
 
 window.addEventListener('load', () => {
+  resizeCanvas();
   assetsLoaded.then(() => {
     let game = (window as any).game = new Game();
 
@@ -21,7 +22,15 @@ window.addEventListener('load', () => {
   });
 });
 
+window.addEventListener('resize', resizeCanvas);
+
 const audioContext = new AudioContext();
+
+function resizeCanvas() {
+  const canvas = document.querySelector('canvas')!;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
 
 function fillWithAudioBuffer(url: string): PropertyDecorator {
   return function(target: any, propertyKey: string) {

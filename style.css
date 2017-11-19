@@ -1,0 +1,19 @@
+
+canvas {
+	background: gray url(grass.jpeg) repeat 0 0;
+	animation: slide 25s linear infinite;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.hero-bkg-animated h1 {
+  font-family: sans-serif;
+}
+
+@keyframes slide {
+    from { background-position: 0 0; }
+    to { background-position: -1024px 0; }
+}
