@@ -8,7 +8,7 @@ class Projectile extends GameObject {
   constructor(readonly game: Game, public x: number, public y: number, public direction: number) {
     super(game);
     const sound = audioContext.createBufferSource();
-    sound.buffer = Projectile.fireSoundBuffer;
+    sound.buffer = this.fireSoundBuffer;
     sound.connect(audioContext.destination);
     sound.start(0);
   }
@@ -28,7 +28,7 @@ class Projectile extends GameObject {
   }
 
   @fillWithAudioBuffer('sounds/pew.wav')
-  protected static fireSoundBuffer: AudioBuffer;
+  protected fireSoundBuffer: AudioBuffer;
 }
 
 @queryable
@@ -40,7 +40,7 @@ class Buzzsaw extends Projectile {
   private static buzzsawImage : HTMLImageElement;
 
   @fillWithAudioBuffer('sounds/buzz.wav')
-  protected static fireSoundBuffer: AudioBuffer;
+  protected fireSoundBuffer: AudioBuffer;
 
   draw(context: CanvasRenderingContext2D) {
     context.drawImage(
