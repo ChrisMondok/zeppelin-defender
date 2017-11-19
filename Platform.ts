@@ -15,6 +15,9 @@ class Platform extends GameObject {
 
   readonly cables: Cable[] = [];
 
+  @fillWithImage('images/platform.jpeg')
+  private platformTexture : HTMLImageElement;
+
   constructor(game: Game, readonly center: Point) {
     super(game);
     this.x = this.center.x - 10;
@@ -27,10 +30,11 @@ class Platform extends GameObject {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    context.fillStyle = '#ccc';
+    context.translate(this.x, this.y);
+    context.fillStyle = context.createPattern(this.platformTexture, 'repeat');
     context.strokeStyle = 'black';
-    context.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
-    context.strokeRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+    context.fillRect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
+    context.strokeRect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
   }
 
   addContents(c: GameObject) {
