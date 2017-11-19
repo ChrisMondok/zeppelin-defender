@@ -21,6 +21,8 @@ class Game {
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
+    new Hud(this);
+
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
     new Background(this);
