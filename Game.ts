@@ -11,7 +11,7 @@ class Game {
 
   private readonly gamepadInput = new GamepadInput(0);
 
-  @fillWithAudioBuffer('sounds/wind.wav')
+  @fillWithAudioBuffer('sounds/wind.ogg')
   private static windSoundBuffer: AudioBuffer;
 
   constructor () {
