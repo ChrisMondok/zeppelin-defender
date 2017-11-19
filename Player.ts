@@ -66,7 +66,8 @@ class Player extends GameObject {
     //draw shadow
     context.save();
     context.beginPath();
-    for(let p of this.game.getObjectsOfType(Platform).filter(p => this.z > p.z)) {
+    for(let p of this.game.getObjectsOfType(Platform)) {
+      if(p.z < this.z) continue;
       context.rect(p.x - p.width/2, p.y - p.height/2, p.width, p.height);
     }
     context.clip();
@@ -153,10 +154,11 @@ class Player extends GameObject {
         }
       }
     } else {
-      const occludingPlatforms = this.game.getObjectsOfType(Platform).filter(p => p.occludes(this));
-      if(occludingPlatforms[0]) {
-        this.platform = occludingPlatforms[0];
-        occludingPlatforms[0].addContents(this);
+      for(const p of this.game.getObjectsOfType(Platform)) {
+        if(!p.occludes(this)) continue;
+        this.platform = p;
+        p.addContents(this);
+        break;
       }
     }
   }
