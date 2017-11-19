@@ -1,7 +1,7 @@
 class Game {
   static queryableTypes: QueryableType[] = [];
 
-  private readonly context: CanvasRenderingContext2D;
+  readonly context: CanvasRenderingContext2D;
 
   private readonly objects: GameObject[] = [];
 
@@ -19,6 +19,7 @@ class Game {
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
+    new Background(this);
     new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
     new SlidingThrowingEnemy(this, {x: 300, y: 50});
