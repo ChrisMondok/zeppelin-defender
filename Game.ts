@@ -5,6 +5,8 @@ class Game {
 
   lives = 3;
 
+  score = 0;
+
   private readonly objects: GameObject[] = [];
 
   private readonly objectsByType: {[key: number]: GameObject[]} = {};
