@@ -3,6 +3,8 @@ class Game {
 
   readonly context: CanvasRenderingContext2D;
 
+  lives = 3;
+
   private readonly objects: GameObject[] = [];
 
   private readonly objectsByType: {[key: number]: GameObject[]} = {};
@@ -10,6 +12,8 @@ class Game {
   private lastTick: number|null = null;
 
   private readonly gamepadInput = new GamepadInput(0);
+
+  private timeSpentWithNoPlayers = 0;
 
   @fillWithAudioBuffer('sounds/wind.ogg')
   private static windSoundBuffer: AudioBuffer;
@@ -24,7 +28,6 @@ class Game {
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
     new SlidingThrowingEnemy(this, {x: 300, y: 50});
     new Target(this, (canvas.width / 2), (canvas.height/2));
-    new Player(this);
 
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
@@ -83,8 +86,11 @@ class Game {
       if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
     }
 
-    if(!this.getObjectsOfType(Player).length) {
-      new Player(this);
+    if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
+    else this.timeSpentWithNoPlayers = 0;
+
+    if(this.timeSpentWithNoPlayers > 1000 && this.canSpawn()) {
+      this.spawnPlayer();
     }
 
     this.lastTick = ts;
@@ -104,6 +110,18 @@ class Game {
 
   isInBounds(point: Point) {
     return point.x >= 0 && point.y >= 0 && point.x <= this.context.canvas.width && point.y <= this.context.canvas.height;
+  }
+
+  private canSpawn() {
+    return this.lives > 0 && this.getObjectsOfType(Platform).length > 0;
+  }
+
+  private spawnPlayer() {
+    this.lives--;
+    const p = new Player(this);
+    const platform = this.getObjectsOfType(Platform)[0];
+    p.x = platform.center.x;
+    p.y = platform.center.y;
   }
 }
 

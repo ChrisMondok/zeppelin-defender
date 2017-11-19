@@ -22,13 +22,6 @@ class Player extends GameObject {
 
   constructor(readonly game: Game) {
     super(game);
-    // Whoa this seems fragile.
-    this.platform = game.getObjectsOfType(Platform)[0];
-    this.x = this.platform.x;
-    this.y = this.platform.y;
-    this.z = this.platform.z + 1;
-    this.platform.addContents(this);
-
     this.deathSound = audioContext.createBufferSource();
     this.deathSound.buffer = Player.deathSoundBuffer;
     this.deathSound.connect(audioContext.destination);
