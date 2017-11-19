@@ -17,6 +17,8 @@ class Cable extends GameObject {
 
     for(const projectile of this.game.getObjectsOfType(Projectile)) {
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
+        this.platform.velocity.x += projectile.speed * Math.cos(projectile.direction) / 2;
+        this.platform.velocity.y += projectile.speed * Math.sin(projectile.direction) / 2;
         this.destroy();
       }
     }
