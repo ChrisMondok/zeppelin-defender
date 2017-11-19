@@ -1,7 +1,12 @@
+html, body {
+	height: 100%;
+	padding: 0;
+	background-color: black;
+}
+body {
+	display: flex;
+	align-items: center;
+}
 canvas {
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
+	flex: 1 1 auto;
 }
