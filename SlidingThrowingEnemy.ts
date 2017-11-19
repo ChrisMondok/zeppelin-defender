@@ -13,6 +13,7 @@ class SlidingThrowingEnemy extends GameObject {
   readonly MAX_VELOCITY = 5;
   readonly MAX_ACCELERATION = 2;
   z = 2;
+
   
   constructor(game: Game, readonly center: Point) {
     super(game);
@@ -87,7 +88,7 @@ class SlidingThrowingEnemy extends GameObject {
 
   private fire() {
     if(this.currentAimTarget)
-      new Projectile(this.game, this.x, this.y, direction(this, this.currentAimTarget));
+      new Buzzsaw(this.game, this.x, this.y, direction(this, this.currentAimTarget));
   }
 
 

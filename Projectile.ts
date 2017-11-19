@@ -28,5 +28,28 @@ class Projectile extends GameObject {
   }
 
   @fillWithAudioBuffer('sounds/pew.wav')
-  private static fireSoundBuffer: AudioBuffer;
+  protected static fireSoundBuffer: AudioBuffer;
 }
+
+@queryable
+class Buzzsaw extends Projectile {
+  readonly HEIGHT = 20;
+  readonly WIDTH = 20;
+
+  @fillWithImage('images/buzzsaw.png')
+  private static buzzsawImage : HTMLImageElement;
+
+  @fillWithAudioBuffer('sounds/buzz.wav')
+  protected static fireSoundBuffer: AudioBuffer;
+
+  draw(context: CanvasRenderingContext2D) {
+    context.drawImage(
+      Buzzsaw.buzzsawImage, 
+      this.x - (this.WIDTH / 2), 
+      this.y - (this.HEIGHT / 2), 
+      this.WIDTH, 
+      this.HEIGHT
+    );
+  }
+}
+
