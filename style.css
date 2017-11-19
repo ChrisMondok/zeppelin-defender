@@ -1,13 +1,13 @@
 html, body {
 	height: 100%;
+	width: 100%;
 	padding: 0;
+	margin: 0;
 	background-color: black;
 	font-family: 'Poiret One', cursive;
 }
-body {
-	display: flex;
-	align-items: center;
-}
 canvas {
-	flex: 1 1 auto;
+	object-fit: contain;
+	height: 100%;
+	width: 100%;
 }
