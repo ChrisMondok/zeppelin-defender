@@ -35,6 +35,8 @@ class Projectile extends GameObject {
 class Buzzsaw extends Projectile {
   readonly HEIGHT = 20;
   readonly WIDTH = 20;
+  readonly ROTATIONAL_SPEED = 10;
+  dir = 0;
 
   @fillWithImage('images/buzzsaw.png')
   private static buzzsawImage : HTMLImageElement;
@@ -42,11 +44,18 @@ class Buzzsaw extends Projectile {
   @fillWithAudioBuffer('sounds/buzz.wav')
   protected fireSoundBuffer: AudioBuffer;
 
+  tick(dt: number) {
+    super.tick(dt);
+    this.dir += (dt * this.ROTATIONAL_SPEED);
+  }
+
   draw(context: CanvasRenderingContext2D) {
+    context.translate(this.x, this.y)
+    context.rotate(this.dir);
     context.drawImage(
       Buzzsaw.buzzsawImage, 
-      this.x - (this.WIDTH / 2), 
-      this.y - (this.HEIGHT / 2), 
+      0 - (this.WIDTH / 2), 
+      0 - (this.HEIGHT / 2), 
       this.WIDTH, 
       this.HEIGHT
     );
