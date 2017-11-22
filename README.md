@@ -1,4 +1,4 @@
-# Throwback
+# Zeppelin Defender
 
 ## Concept
 [itch.io Game-Off 2017](https://itch.io/jam/game-off-2017)
