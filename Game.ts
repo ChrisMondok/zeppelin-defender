@@ -1,3 +1,5 @@
+/// <reference path="GameObject.ts"/>
+
 class Game {
   static queryableTypes: QueryableType[] = [];
 
