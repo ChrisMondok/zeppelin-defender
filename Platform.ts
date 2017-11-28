@@ -103,5 +103,9 @@ class Platform extends GameObject {
       c.x += (this.x - oldX);
       c.y += (this.y - oldY);
     }
+
+    if(this.z < -200) {
+      this.destroy();
+    }
   }
 }
