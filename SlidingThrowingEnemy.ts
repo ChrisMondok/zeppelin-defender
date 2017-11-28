@@ -55,14 +55,14 @@ class SlidingThrowingEnemy extends GameObject {
 
   draw(context: CanvasRenderingContext2D) {
     context.beginPath();
-    context.fillStyle = 'green';
+    context.fillStyle = 'purple';
     context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     context.fill();
 
     if(this.currentAimTarget) {
       context.moveTo(this.x, this.y);
       context.lineTo(this.currentAimTarget.x, this.currentAimTarget.y);
-      context.fillStyle = 'purple';
+      context.strokeStyle = 'purple';
       context.stroke();
     }
   }
