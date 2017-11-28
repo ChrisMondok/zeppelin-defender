@@ -2,8 +2,10 @@
 
 @queryable
 class Platform extends GameObject {
-  readonly velocity = {x: 0, y: 0};
+  readonly velocity = {x: 0, y: 0, z: 0};
   z = -1;
+  scale = 1;
+  isCutLoose: boolean;
 
   springConstant = 0.1;
   damping = 0.01;
@@ -14,6 +16,8 @@ class Platform extends GameObject {
   readonly contents: GameObject[] = [];
 
   readonly cables: Cable[] = [];
+
+  readonly cutLooseSound: AudioBufferSourceNode;
 
   @fillWithImage('images/platform.jpeg')
   private platformTexture : HTMLImageElement;
@@ -27,10 +31,18 @@ class Platform extends GameObject {
     this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * -0.2}));
     this.cables.push(new Cable(this, {x: this.width * -0.2, y: this.height * 0.2}));
     this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * 0.2}));
+
+    this.cutLooseSound = audioContext.createBufferSource();
+    this.cutLooseSound.buffer = Platform.cutLooseSoundBuffer;
+    this.cutLooseSound.connect(audioContext.destination);
   }
 
+  @fillWithAudioBuffer('sounds/Wilhelm_Scream.ogg')
+  private static cutLooseSoundBuffer: AudioBuffer;
+
   draw(context: CanvasRenderingContext2D) {
-    context.translate(this.x, this.y);
+    context.translate(this.x, this.y - this.z/2);
+    context.scale(this.scale, this.scale);
     context.fillStyle = context.createPattern(this.platformTexture, 'repeat');
     context.strokeStyle = 'black';
     context.fillRect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
@@ -46,7 +58,7 @@ class Platform extends GameObject {
   }
 
   occludes(point: Point|Point3D) {
-    const occludesXY = Math.abs(this.x - point.x) < this.width/2 && Math.abs(this.y - point.y) < this.height/2;
+    const occludesXY = Math.abs(this.x - point.x) < (this.width/2 * this.scale) && Math.abs(this.y - point.y) < (this.height/2 * this.scale);
     if(!occludesXY) return false;
 
     if(!isPoint3D(point)) return true;
@@ -60,17 +72,32 @@ class Platform extends GameObject {
     const magnitude = distanceSquared(this, this.center) * this.springConstant;
     const dir = direction(this, this.center);
 
+    this.scale = Math.max(0, 1 + this.z/200);
+
     this.velocity.x += magnitude * Math.cos(dir) * ts/1000;
     this.velocity.y += magnitude * Math.sin(dir) * ts/1000;
 
     this.velocity.x *= 1-this.damping;
     this.velocity.y *= 1-this.damping;
 
+    if(!this.isCutLoose) {
+      if(this.cables.filter(c => !c.destroyed).length > 0) {
+        this.velocity.z = 0;
+      } else {
+        this.velocity.z -= 9.8;
+        this.isCutLoose = true;
+        this.cutLooseSound.start(0);
+      }
+    } else {
+      this.velocity.z -= 9.8;
+    }
+
     const oldX = this.x;
     const oldY = this.y;
 
     this.x += this.velocity.x * ts/1000;
     this.y += this.velocity.y * ts/1000;
+    this.z += this.velocity.z * ts/1000;
 
     for(const c of this.contents) {
       c.x += (this.x - oldX);

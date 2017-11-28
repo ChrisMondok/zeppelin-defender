@@ -7,8 +7,13 @@ class Cable extends GameObject {
 
   destroyed = false;
 
+  readonly snapSound: AudioBufferSourceNode;
+
   constructor(readonly platform: Platform, readonly offset: Point) {
     super(platform.game);
+    this.snapSound = audioContext.createBufferSource();
+    this.snapSound.buffer = Cable.snapSoundBuffer;
+    this.snapSound.connect(audioContext.destination);
   }
 
   tick() {
@@ -46,5 +51,9 @@ class Cable extends GameObject {
   destroy() {
     super.destroy();
     this.destroyed = true;
+    this.snapSound.start(0);
   }
+
+  @fillWithAudioBuffer('sounds/snap.ogg')
+  private static snapSoundBuffer: AudioBuffer;
 }

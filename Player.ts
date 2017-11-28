@@ -61,12 +61,14 @@ class Player extends GameObject {
     context.beginPath();
     for(let p of this.game.getObjectsOfType(Platform)) {
       if(p.z > this.z) continue;
-      context.rect(p.x - p.width/2, p.y - p.height/2, p.width, p.height);
+      context.rect(p.x - (p.scale * p.width/2), p.y - (p.scale * p.height/2), p.scale * p.width, p.scale * p.height);
     }
     context.clip();
     context.beginPath();
     context.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    const platformDistanceBelow = this.platform ? this.platform.z : 0;
+    const platformScale = this.platform ? this.platform.scale : 1;
+    context.arc(this.x, this.y - platformDistanceBelow/2, this.radius * platformScale, 0, 2 * Math.PI);
     context.fill();
     context.restore();
 
