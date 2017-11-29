@@ -1,16 +1,13 @@
 @queryable
 class Projectile extends GameObject {
   z = 0;
-  speed = 200;
+  speed = 400;
 
   team: 'PLAYER' | 'ENEMY' = 'ENEMY';
 
   constructor(readonly game: Game, public x: number, public y: number, public direction: number) {
     super(game);
-    const sound = audioContext.createBufferSource();
-    sound.buffer = this.fireSoundBuffer;
-    sound.connect(audioContext.destination);
-    sound.start(0);
+    this.game.playSound(this.fireSoundBuffer);
   }
 
   tick(dt: number) {
@@ -37,6 +34,7 @@ class Buzzsaw extends Projectile {
   readonly WIDTH = 20;
   readonly ROTATIONAL_SPEED = 10;
   dir = 0;
+  speed = 200;
 
   @fillWithImage('images/buzzsaw.png')
   private static buzzsawImage : HTMLImageElement;

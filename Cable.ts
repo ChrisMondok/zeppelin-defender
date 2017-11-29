@@ -5,7 +5,8 @@
 class Cable extends GameObject {
   radius = 8;
 
-  destroyed = false;
+  @fillWithAudioBuffer('sounds/snap.ogg')
+  private static snapSoundBuffer: AudioBuffer;
 
   constructor(readonly platform: Platform, readonly offset: Point) {
     super(platform.game);
@@ -25,26 +26,24 @@ class Cable extends GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    const canvasCenterX = ctx.canvas.width / 2;
-    const canvasCenterY = ctx.canvas.height / 2;
-
-    ctx.translate(canvasCenterX, canvasCenterY);
-    ctx.fillStyle = 'green';
+    ctx.translate(this.game.center.x, this.game.center.y);
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'black';
     ctx.beginPath();
-    ctx.arc(this.x - canvasCenterX, this.y - canvasCenterY, this.radius, 0, 2 * Math.PI, false);
+    ctx.arc(this.x - this.game.center.x, this.y - this.game.center.y, this.radius, 0, 2 * Math.PI, false);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(this.x - canvasCenterX, this.y - canvasCenterY);
+    ctx.moveTo(this.x - this.game.center.x, this.y - this.game.center.y);
     ctx.scale(5, 5);
     ctx.lineTo(
-      this.platform.center.x + this.offset.x - canvasCenterX,
-      this.platform.center.y + this.offset.y - canvasCenterY);
+      this.platform.center.x + this.offset.x - this.game.center.x,
+      this.platform.center.y + this.offset.y - this.game.center.y);
     ctx.stroke();
   }
 
   destroy() {
     super.destroy();
-    this.destroyed = true;
+    this.game.playSound(Cable.snapSoundBuffer);
   }
 }

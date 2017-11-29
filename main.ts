@@ -1,4 +1,4 @@
-let assetsLoaded: Promise<void>;
+var assetsLoaded: Promise<void>;
 
 function addAsset(asset: Promise<void>) {
   assetsLoaded = assetsLoaded || Promise.resolve();

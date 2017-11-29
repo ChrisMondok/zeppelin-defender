@@ -5,9 +5,17 @@ class Game {
 
   readonly context: CanvasRenderingContext2D;
 
+  readonly center: Point;
+
+  readonly diagonalSize: number;
+
+  wave: Wave;
+
   lives = 3;
 
   score = 0;
+
+  paused = false;
 
   private readonly objects: GameObject[] = [];
 
@@ -25,23 +33,41 @@ class Game {
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
-    new Hud(this);
-
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
-    new Background(this);
-    new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
-    new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
-    new SlidingThrowingEnemy(this, {x: 300, y: 50});
-    new Target(this, (canvas.width / 2), (canvas.height/2));
+    this.center = {x: canvas.width / 2, y: canvas.height / 2}
+    this.diagonalSize = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2));
 
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
     sound.connect(audioContext.destination);
     sound.start(0);
+
+    window.addEventListener('blur', () => this.paused = true);
+    window.addEventListener('focus', () => this.paused = false);
+
+    this.reset();
   }
 
-  getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
+  reset() {
+    while(this.objects.length) {
+      const o = this.objects.pop()!;
+      console.log("Removing "+o.constructor.name);
+      o.destroy();
+    }
+
+    new Hud(this);
+    new Background(this);
+
+    this.score = 0;
+
+    new Platform(this, {x: this.center.x - 200, y: this.center.y});
+    new Platform(this, {x: this.center.x + 200, y: this.center.y});
+
+    this.wave = new Wave(this, 1);
+  }
+
+  getObjectsOfType<T extends GameObject>(type: GameObjectType<T>) {
     if(!isQueryable(type)) throw new Error(`Type ${type.name} is not queryable. Add @queryable to its declaration.`);
     return this.objectsByType[type.__queryKey] as T[];
   }
@@ -59,10 +85,7 @@ class Game {
 
   remove(thing: GameObject) {
     const index = this.objects.indexOf(thing);
-    if(index === -1) {
-      console.error("Trying to remove a thing we don't know about!");
-      return;
-    }
+    if(index === -1) return;
     this.objects.splice(index, 1);
 
     if(isQueryable(thing.constructor)) {
@@ -84,19 +107,29 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    this.gamepadInput.tick();
+    if(!this.paused) {
+      this.gamepadInput.tick();
 
-    for(let o of this.objects) {
-      if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
-      o.tick(dt);
-      if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
-    }
+      for(let o of this.objects) {
+        if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
+        o.tick(dt);
+        if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
+      }
 
-    if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
-    else this.timeSpentWithNoPlayers = 0;
+      if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
+      else this.timeSpentWithNoPlayers = 0;
 
-    if(this.timeSpentWithNoPlayers > 1000 && this.canSpawn()) {
-      this.spawnPlayer();
+      if(this.timeSpentWithNoPlayers > 1000 && this.canSpawnPlayer()) {
+        this.spawnPlayer();
+      }
+
+      this.wave.tick(dt);
+
+      if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
+        for(const cable of this.getObjectsOfType(Cable)) this.addScore(10, cable);
+        this.wave = new Wave(this, this.wave.number + 1);
+        for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
+      }
     }
 
     this.lastTick = ts;
@@ -118,7 +151,29 @@ class Game {
     return point.x >= 0 && point.y >= 0 && point.x <= this.context.canvas.width && point.y <= this.context.canvas.height;
   }
 
-  private canSpawn() {
+  addScore(deltaScore: number, where?: Point) {
+    if(this.isOver()) return;
+    this.score += deltaScore;
+    if(where) new ScoreParticles(this, deltaScore, where);
+  }
+
+  isOver() {
+    if(this.getObjectsOfType(Player).length > 0) return false;
+
+    return !this.canSpawnPlayer();
+
+  }
+
+  playSound(buffer: AudioBuffer) {
+    if (this.paused) return;
+    const sound = audioContext.createBufferSource();
+    sound.buffer = buffer;
+    sound.connect(audioContext.destination);
+    sound.start(0);
+  }
+    
+
+  private canSpawnPlayer() {
     return this.lives > 0 && this.getObjectsOfType(Platform).length > 0;
   }
 

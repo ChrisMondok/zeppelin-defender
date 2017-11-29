@@ -1,8 +1,5 @@
 /// <reference path="GameObject.ts"/>
 
-// Thanks IE.
-declare interface Math { log10: (n: number) => number; }
-
 class Hud extends GameObject {
   z = Infinity;
 
@@ -11,6 +8,17 @@ class Hud extends GameObject {
   readonly padding = 24;
 
   private dt: number = 0;
+
+  private readonly messageGradient: CanvasGradient;
+
+  constructor(game: Game) {
+    super(game);
+    const g = this.messageGradient = game.context.createLinearGradient(0, 0, 0, game.context.canvas.height);
+    g.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
+    g.addColorStop(0.25, 'transparent');
+    g.addColorStop(0.75, 'transparent');
+    g.addColorStop(1, 'rgba(0, 0, 0, 0.75)');
+  }
 
   tick(dt: number) {
     this.dt = dt;
@@ -21,11 +29,15 @@ class Hud extends GameObject {
   draw(context: CanvasRenderingContext2D) {
     this.drawFPS(context);
     this.drawLives(context);
-    this.drawScore(context);
+    this.drawAmmo(context);
+
+    if(this.game.paused) this.drawMessage(context, 'Paused');
+    else if(this.game.isOver()) this.drawMessage(context, 'Game Over');
+    else if(this.game.wave.duration < Wave.initialDelay) this.drawMessage(context, 'Wave', this.game.wave.number.toString());
   }
 
   private updateScore() {
-    while(Math.max(3, Math.floor(Math.log10(this.game.score) + 1)) > this.scoreDigits.length) {
+    while(Math.max(5, Math.floor(Math.log10(this.game.score) + 1)) > this.scoreDigits.length) {
       const d = new Digit(this.game)
       this.scoreDigits.push(d);
       d.x = this.game.context.canvas.width - this.padding - this.scoreDigits.length * Digit.width;
@@ -36,9 +48,6 @@ class Hud extends GameObject {
       const d = this.scoreDigits[i];
       d.number = Math.floor(this.game.score / Math.pow(10, i)) % 10;
     }
-  }
-
-  private drawScore(context: CanvasRenderingContext2D) {
   }
 
   private drawFPS(context: CanvasRenderingContext2D) {
@@ -57,6 +66,65 @@ class Hud extends GameObject {
       context.fill();
     }
   }
+
+  private drawAmmo(context: CanvasRenderingContext2D) {
+    const player: Player|undefined = this.game.getObjectsOfType(Player)[0];
+    if(!player) return;
+
+    context.save();
+
+    const rotation = clamp((player.fireCooldown / (Player.reloadTime / 3)), 0, 1) * Math.PI / 3;
+
+    const radius = 32;
+    context.translate(this.padding + radius, context.canvas.height - this.padding - radius);
+    context.rotate(rotation - Math.PI / 2);
+    context.beginPath();
+
+    context.fillStyle = 'silver';
+    context.strokeStyle = 'black';
+    context.lineWidth = 2;
+    for(let i = 0; i < 6; i++) {
+      const x = Math.cos(Math.PI * i/3) * radius/2;
+      const y = Math.sin(Math.PI * i/3) * radius/2;
+      context.arc(x, y, radius/2, 0, 2 * Math.PI);
+    }
+
+    context.stroke();
+    context.fill();
+
+    for(let i = 0; i < 6 ; i++) {
+      context.beginPath();
+      const x = Math.cos(Math.PI * i/3) * radius/1.8;
+      const y = Math.sin(Math.PI * i/3) * radius/1.8;
+      context.arc(x, y, radius/5, 0, 2 * Math.PI);
+      context.fillStyle = i < player.ammo ? 'gold' : 'black';
+      context.fill();
+      context.stroke();
+    }
+
+    context.restore();
+  }
+
+  private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {
+    const lineHeight = 72;
+    context.fillStyle = this.messageGradient;
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.font = lineHeight+"px 'Poiret One'";
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+
+    for(let i = 0; i < lines.length; i++) {
+      const yOffset = lines.length * lineHeight / -2 + lineHeight * i;
+      drawTextOutlined(context, lines[i], context.canvas.width/2, context.canvas.height/2 + yOffset);
+    }
+  }
+}
+
+function drawTextOutlined(context: CanvasRenderingContext2D, text: string, x: number, y: number) {
+  context.fillText(text, x, y);
+  context.strokeText(text, x, y);
 }
 
 class Digit extends GameObject {
@@ -64,10 +132,10 @@ class Digit extends GameObject {
 
   z = Infinity;
 
-  static readonly height = 48;
-  static readonly width = 42;
+  static readonly height = 36;
+  static readonly width = 32;
 
-  private static textHeight = 32;
+  private static textHeight = 24;
 
   private offset = 0;
 

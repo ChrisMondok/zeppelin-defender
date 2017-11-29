@@ -18,13 +18,14 @@ class Player extends GameObject {
 
   shield: Shield|null = null;
 
-  readonly deathSound: AudioBufferSourceNode;
+  ammo = 6;
+
+  fireCooldown = 0;
+
+  static readonly reloadTime = 1000;
 
   constructor(readonly game: Game) {
     super(game);
-    this.deathSound = audioContext.createBufferSource();
-    this.deathSound.buffer = Player.deathSoundBuffer;
-    this.deathSound.connect(audioContext.destination);
   }
 
   tick(dt: number) {
@@ -51,8 +52,11 @@ class Player extends GameObject {
     }
 
     if(this.z < -200) {
+      this.game.playSound(Player.fallingSoundBuffer);
       this.destroy();
     }
+
+    this.fireCooldown = Math.max(0, this.fireCooldown - dt);
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -61,12 +65,14 @@ class Player extends GameObject {
     context.beginPath();
     for(let p of this.game.getObjectsOfType(Platform)) {
       if(p.z > this.z) continue;
-      context.rect(p.x - p.width/2, p.y - p.height/2, p.width, p.height);
+      context.rect(p.x - (p.scale * p.width/2), p.y - (p.scale * p.height/2), p.scale * p.width, p.scale * p.height);
     }
     context.clip();
     context.beginPath();
     context.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    const platformDistanceBelow = this.platform ? this.platform.z : 0;
+    const platformScale = this.platform ? this.platform.scale : 1;
+    context.arc(this.x, this.y - platformDistanceBelow/2, this.radius * platformScale, 0, 2 * Math.PI);
     context.fill();
     context.restore();
 
@@ -89,6 +95,9 @@ class Player extends GameObject {
 
   @bindTo('FIRE', 'press')
   fireProjectile() {
+    if(this.ammo <= 0 || this.fireCooldown > 0) return;
+    this.ammo--;
+    this.fireCooldown = Player.reloadTime;
     const projectile = new Projectile(this.game, this.x, this.y, this.direction);
     projectile.team = 'PLAYER';
   }
@@ -98,7 +107,7 @@ class Player extends GameObject {
     if(!this.platform) return;
     this.velocity.x += this.platform.velocity.x;
     this.velocity.y += this.platform.velocity.y;
-    this.velocity.z = 250;
+    this.velocity.z = 300;
     this.removeFromPlatform();
   }
 
@@ -123,6 +132,10 @@ class Player extends GameObject {
   @fillWithAudioBuffer('sounds/ohno.wav')
   private static deathSoundBuffer: AudioBuffer;
 
+  @fillWithAudioBuffer('sounds/Wilhelm_Scream.ogg')
+  private static fallingSoundBuffer: AudioBuffer;
+
+
   private doPlatformInteraction() {
     if(this.platform) {
       if(!this.platform.occludes(this)) {
@@ -139,8 +152,8 @@ class Player extends GameObject {
           y: this.velocity.y - oldVelocity.y,
         };
 
-        this.platform.velocity.x += dv.x/-5;
-        this.platform.velocity.y += dv.y/-5;
+        this.platform.velocity.x += dv.x/-3;
+        this.platform.velocity.y += dv.y/-3;
         if(this.z <= this.platform.z + 1) {
           this.velocity.z = Math.max(0, this.velocity.z);
           this.z = this.platform.z + 1;
@@ -173,7 +186,7 @@ class Player extends GameObject {
       if(projectile.team === 'PLAYER') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
         this.destroy();
-        this.deathSound.start(0);
+        this.game.playSound(Player.deathSoundBuffer);
       }
     }
   }
