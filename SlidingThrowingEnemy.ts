@@ -8,8 +8,8 @@ class SlidingThrowingEnemy extends GameObject {
   currentDestination?: Point;
   currentAimTarget?: Point;
   ai: AI;
-  private velocity = {x:0, y:0};
-  private acceleration = {x:0, y:0};
+  private readonly velocity = {x:0, y:0};
+  private readonly acceleration = {x:0, y:0};
   readonly MAX_VELOCITY = 10;
   readonly MAX_ACCELERATION = 0.25;
   z = 2;
@@ -104,7 +104,7 @@ class SlidingThrowingEnemy extends GameObject {
   private applyAccelerationAndVelocity() {
     this.velocity.x += this.acceleration.x;
     this.velocity.y += this.acceleration.y;
-    this.velocity = clampVector(this.velocity, this.MAX_VELOCITY);
+    clampVector(this.velocity, this.MAX_VELOCITY);
     this.x += this.velocity.x;
     this.y += this.velocity.y;
   }
@@ -116,10 +116,9 @@ class SlidingThrowingEnemy extends GameObject {
   private seekTarget(target: Point, dt: number) {
     let dx = target.x - this.x;
     let dy = target.y - this.y;
-    let accx = this.xpid.step(dt, dx)
-    let accy = this.ypid.step(dt, dy);
-
-    this.acceleration = clampVector({x:accx, y:accy}, this.MAX_ACCELERATION);
+    this.acceleration.x = this.xpid.step(dt, dx)
+    this.acceleration.y = this.ypid.step(dt, dy);
+    clampVector(this.acceleration, this.MAX_ACCELERATION);
   }
 
   private fire() {
