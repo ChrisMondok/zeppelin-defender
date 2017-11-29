@@ -152,8 +152,8 @@ class Player extends GameObject {
           y: this.velocity.y - oldVelocity.y,
         };
 
-        this.platform.velocity.x += dv.x/-5;
-        this.platform.velocity.y += dv.y/-5;
+        this.platform.velocity.x += dv.x/-3;
+        this.platform.velocity.y += dv.y/-3;
         if(this.z <= this.platform.z + 1) {
           this.velocity.z = Math.max(0, this.velocity.z);
           this.z = this.platform.z + 1;
