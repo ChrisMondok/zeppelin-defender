@@ -37,7 +37,7 @@ class Shield extends GameObject {
   }
 
   private deflect(projectile: Projectile) {
-    this.game.score += 25;
+    this.game.addScore(25, this);
     if(this.power) {
       projectile.team = 'PLAYER';
       projectile.direction = this.direction;

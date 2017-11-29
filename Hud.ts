@@ -31,7 +31,7 @@ class Hud extends GameObject {
     this.drawLives(context);
 
     if(this.game.paused) this.drawMessage(context, 'Paused');
-    else if(this.game.lives === 0 && this.game.getObjectsOfType(Player).length === 0) this.drawMessage(context, 'Game Over');
+    else if(this.game.isOver()) this.drawMessage(context, 'Game Over');
     else if(this.game.wave.duration < Wave.initialDelay) this.drawMessage(context, 'Wave', this.game.wave.number.toString());
   }
 

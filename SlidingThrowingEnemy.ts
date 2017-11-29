@@ -140,7 +140,7 @@ class SlidingThrowingEnemy extends GameObject {
       if(projectile.team === 'ENEMY') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
         this.destroy();
-        this.game.score += (projectile instanceof Buzzsaw) ? 500 : 100;
+        this.game.addScore((projectile instanceof Buzzsaw) ? 500 : 100, this);
       }
     }
   }

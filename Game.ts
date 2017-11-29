@@ -114,7 +114,7 @@ class Game {
       this.wave.tick(dt);
 
       if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
-        this.score += this.getObjectsOfType(Cable).length * 10;
+        for(const cable of this.getObjectsOfType(Cable)) this.addScore(10, cable);
         this.wave = new Wave(this, this.wave.number + 1);
       }
     }
@@ -136,6 +136,19 @@ class Game {
 
   isInBounds(point: Point) {
     return point.x >= 0 && point.y >= 0 && point.x <= this.context.canvas.width && point.y <= this.context.canvas.height;
+  }
+
+  addScore(deltaScore: number, where?: Point) {
+    if(this.isOver()) return;
+    this.score += deltaScore;
+    if(where) new ScoreParticles(this, deltaScore, where);
+  }
+
+  isOver() {
+    if(this.getObjectsOfType(Player).length > 0) return false;
+
+    return !this.canSpawnPlayer();
+
   }
 
   private canSpawnPlayer() {
