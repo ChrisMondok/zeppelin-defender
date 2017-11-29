@@ -10,8 +10,8 @@ class SlidingThrowingEnemy extends GameObject {
   ai: AI;
   private velocity = {x:0, y:0};
   private acceleration = {x:0, y:0};
-  readonly MAX_VELOCITY = 5;
-  readonly MAX_ACCELERATION = 2;
+  readonly MAX_VELOCITY = 10;
+  readonly MAX_ACCELERATION = 0.25;
   z = 2;
   radius = 25;
 
@@ -19,8 +19,8 @@ class SlidingThrowingEnemy extends GameObject {
     super(game);
     this.x = this.center.x;
     this.y = this.center.y;
-    this.xpid = new PID(0.12,0.00003,2);
-    this.ypid = new PID(0.12,0.00003,2);
+    this.xpid = new PID(1, 0.00003, 200);
+    this.ypid = new PID(1, 0.00003, 200);
     this.ai = new AI(this.game, this, [
       new WaitMove(this, 500),
       new DestinationMove(this, { x: 100, y: 100 }),
