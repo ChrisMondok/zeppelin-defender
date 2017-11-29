@@ -151,23 +151,6 @@ class Game {
     p.x = platform.center.x;
     p.y = platform.center.y;
   }
-
-  private getNextWave(number: number) {
-    console.log(`Wave ${number}`);
-    const instructions: SpawnInstruction[] = [];
-    const minimumSpawnDelay = 1000;
-    const maximumSpawnDelay = 3000;
-    const numberOfEnemies = 5;
-
-    let spawnTime = 1000;
-
-    while(instructions.length < numberOfEnemies) {
-      instructions.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
-      spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
-    }
-
-    return new Wave(this, number, instructions);
-  }
 }
 
 let __nextQueryKey = 0;

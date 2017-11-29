@@ -1,9 +1,22 @@
 class Wave {
+  readonly spawnList: SpawnInstruction[];
   readonly enemies: GameObject[] = [];
 
   duration = 0;
 
-  constructor(readonly game: Game, readonly number: number, readonly spawnList: SpawnInstruction[]){} 
+  constructor(readonly game: Game, readonly number: number){
+    this.spawnList = [];
+    const minimumSpawnDelay = 1000;
+    const maximumSpawnDelay = 3000;
+    const numberOfEnemies = 5;
+
+    let spawnTime = 1000;
+
+    while(this.spawnList.length < numberOfEnemies) {
+      this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
+      spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
+    }
+  }
 
   tick(dt: number) {
     this.duration += dt;
