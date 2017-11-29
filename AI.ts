@@ -82,10 +82,9 @@ class ExitMove extends DestinationMove {
 
   init() {
     const centerOfGame = {x: this.game.context.canvas.width/2, y: this.game.context.canvas.height/2};
-    const distanceToTravel = this.game.context.canvas.width / 2; // good enough?
     const dir = direction(centerOfGame, this.owner);
-    this.destination.x = Math.cos(dir) * distanceToTravel;
-    this.destination.y = Math.sin(dir) * distanceToTravel;
+    this.destination.x = Math.cos(dir) * this.game.diagonalSize;
+    this.destination.y = Math.sin(dir) * this.game.diagonalSize;
     this.hasStarted = true;
   }
 

@@ -3,6 +3,10 @@ class Game {
 
   readonly context: CanvasRenderingContext2D;
 
+  readonly center: Point;
+
+  readonly diagonalSize: number;
+
   lives = 3;
 
   score = 0;
@@ -27,6 +31,9 @@ class Game {
 
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
+    this.center = {x: canvas.width / 2, y: canvas.height / 2}
+    this.diagonalSize = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2));
+
     new Background(this);
     new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
