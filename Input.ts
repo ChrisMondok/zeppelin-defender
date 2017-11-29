@@ -1,45 +1,19 @@
-class GamepadInput {
-  private readonly previousState: GamepadSnapshot = {
-    buttons: {},
-    axes: {}
-  };
+type Action = 'JUMP' | 'BLOCK' | 'FIRE';
 
-  private readonly state: GamepadSnapshot = {
-    buttons: {},
-    axes: {}
-  };
-
-  constructor(readonly gamepadNumber: number) {}
-
-  tick() {
-    const gamepad = this.gamepad;
-
-    this.copyOldState();
-    if(gamepad) this.readState(gamepad);
-    else this.clearState();
-  }
-
-  wasPressed(button: number) {
+abstract class Input {
+  wasPressed(button: Action) {
     return this.state.buttons[button] && !this.previousState.buttons[button];
   }
 
-  wasReleased(button: number) {
+  wasReleased(button: Action) {
     return !this.state.buttons[button] && this.previousState.buttons[button];
   }
 
-  getAxis(axis: number) {
-    const gamepad = this.gamepad;
-    if(!gamepad) return 0;
-    const raw = gamepad.axes[axis];
-    return this.isDeadZone(raw) ? 0 : raw;
-  }
+  abstract getAxis(axis: number): number;
 
-  private get gamepad(): Gamepad|null{
-    return navigator.getGamepads()[this.gamepadNumber];
-  }
-
-  private copyOldState() {
-    for(let b in this.state.buttons) {
+  protected copyOldState() {
+    for(let key in this.state.buttons) {
+      const b = key as Action;
       this.previousState.buttons[b] = this.state.buttons[b] || false;
     }
 
@@ -48,44 +22,34 @@ class GamepadInput {
     }
   }
 
-  private readState(gamepad: Gamepad) {
-    for(let b = 0; b < gamepad.buttons.length; b++) {
-      this.state.buttons[b] = gamepad.buttons[b].pressed;
-    }
+  protected readonly previousState: InputSnapshot = {
+    buttons: {BLOCK: false, JUMP: false, FIRE: false},
+    axes: {}
+  };
 
-    for(let a = 0; a < gamepad.axes.length; a++) {
-      this.state.axes[a] = gamepad.axes[a];
-    }
-  }
-
-  private clearState() {
-    for(let b in this.state.buttons) this.state.buttons[b] = false;
-    for(let a in this.state.axes) this.state.axes[a] = 0;
-  }
-
-  private isDeadZone(raw: number) {
-    return Math.abs(raw)<0.2;
-  }
-
+  protected readonly state: InputSnapshot = {
+    buttons: {BLOCK: false, JUMP: false, FIRE: false},
+    axes: {}
+  };
 }
 
 type InitializedIHaveBindings = {
-  doButtonBindings: (input: GamepadInput) => void;
-  doAxisBindings: (input: GamepadInput) => void;
+  doButtonBindings: (input: Input) => void;
+  doAxisBindings: (input: Input) => void;
 
   __bindingsInitialized: true;
 
-  __onGamepadPress: Array<{button: number, action: () => void}>;
-  __onGamepadRelease: Array<{button: number, action: () => void}>;
+  __onGamepadPress: Array<{button: Action, action: () => void}>;
+  __onGamepadRelease: Array<{button: Action, action: () => void}>;
   __axisBindings: Array<{axis: number, bindTo: string}>;
 }
 
-type GamepadSnapshot = {
-  buttons: {[key: number]: boolean}
+type InputSnapshot = {
+  buttons: {[key in Action]: boolean}
   axes: {[key: number]: number}
 };
 
-function bindTo(type: 'press' | 'release', {button}: BindingConfig): MethodDecorator {
+function bindTo(button: Action, type: 'press' | 'release'): MethodDecorator {
   return function<T>(target: T, propertyKey: keyof T, descriptor: PropertyDescriptor) {
     const initializedTarget = initializeBindingTarget(target);
     if(type === 'press') {
@@ -141,7 +105,7 @@ function initializeBindingTarget<T>(target: T): T&InitializedIHaveBindings {
   }
 }
 
-type BindingConfig = {button: number};
+type BindingConfig = {button: Action};
 
 function hasBindings(bindable: any): bindable is InitializedIHaveBindings{
   return !!bindable.__bindingsInitialized;

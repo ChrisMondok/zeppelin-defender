@@ -93,7 +93,7 @@ class Player extends GameObject {
     context.stroke()
   }
 
-  @bindTo('press', {button: 2})
+  @bindTo('FIRE', 'press')
   fireProjectile() {
     if(this.ammo <= 0 || this.fireCooldown > 0) return;
     this.ammo--;
@@ -102,7 +102,7 @@ class Player extends GameObject {
     projectile.team = 'PLAYER';
   }
 
-  @bindTo('press', {button: 0})
+  @bindTo('JUMP', 'press')
   jump() {
     if(!this.platform) return;
     this.velocity.x += this.platform.velocity.x;
@@ -111,13 +111,13 @@ class Player extends GameObject {
     this.removeFromPlatform();
   }
 
-  @bindTo('press', {button: 1})
+  @bindTo('BLOCK', 'press')
   block() {
     if(this.shield) return;
     this.shield = new Shield(this.game);
   }
 
-  @bindTo('release', {button: 1})
+  @bindTo('BLOCK', 'release')
   stopBlocking() {
     if(this.shield) this.shield.destroy();
     this.shield = null;
