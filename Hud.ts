@@ -70,8 +70,12 @@ class Hud extends GameObject {
   private drawAmmo(context: CanvasRenderingContext2D) {
     context.save();
 
+    const player: Player|undefined = this.game.getObjectsOfType(Player)[0];
+    const rotation = player ? clamp((player.fireCooldown / (Player.reloadTime / 3)), 0, 1) * Math.PI / 3 : 0;
+
     const radius = 32;
     context.translate(this.padding + radius, context.canvas.height - this.padding - radius);
+    context.rotate(rotation - Math.PI / 2);
     context.beginPath();
 
     context.fillStyle = 'silver';
@@ -86,15 +90,14 @@ class Hud extends GameObject {
     context.stroke();
     context.fill();
 
-    const player = this.game.getObjectsOfType(Player)[0];
     const ammo = player ? player.ammo : 0;
 
     for(let i = 0; i < 6 ; i++) {
       context.beginPath();
-      const x = Math.cos(Math.PI * i/3) * radius/2;
-      const y = Math.sin(Math.PI * i/3) * radius/2;
+      const x = Math.cos(Math.PI * i/3) * radius/1.8;
+      const y = Math.sin(Math.PI * i/3) * radius/1.8;
       context.arc(x, y, radius/5, 0, 2 * Math.PI);
-      context.fillStyle = (5-i) < ammo ? 'gold' : 'black';
+      context.fillStyle = i < ammo ? 'gold' : 'black';
       context.fill();
       context.stroke();
     }
