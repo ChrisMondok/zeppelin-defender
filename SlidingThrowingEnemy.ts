@@ -75,8 +75,8 @@ class SlidingThrowingEnemy extends GameObject {
     const shotsToFire = Math.floor(Math.random() * 5);
 
     const center = {
-      x: this.game.center.x + this.game.context.canvas.width * 0.4 * Math.cos(directionFromCenter),
-      y: this.game.center.y + this.game.context.canvas.height * 0.4 * Math.sin(directionFromCenter)
+      x: this.game.center.x + this.game.context.canvas.width * 0.3 * Math.cos(directionFromCenter),
+      y: this.game.center.y + this.game.context.canvas.height * 0.3 * Math.sin(directionFromCenter)
     }
 
     // first, move into view.
