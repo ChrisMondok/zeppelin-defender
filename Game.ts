@@ -25,6 +25,9 @@ class Game {
 
   private timeSpentWithNoPlayers = 0;
 
+  @fillWithAudioBuffer('sounds/bing.ogg')
+  private static scoreSoundBuffer: AudioBuffer;
+
   @fillWithAudioBuffer('sounds/wind.ogg')
   private static windSoundBuffer: AudioBuffer;
 
@@ -43,10 +46,7 @@ class Game {
 
     this.wave = new Wave(this, 1);
 
-    const sound = audioContext.createBufferSource();
-    sound.buffer = Game.windSoundBuffer;
-    sound.connect(audioContext.destination);
-    sound.start(0);
+    this.playSound(Game.windSoundBuffer);
 
     window.addEventListener('blur', () => this.paused = true);
     window.addEventListener('focus', () => this.paused = false);
@@ -142,6 +142,7 @@ class Game {
   addScore(deltaScore: number, where?: Point) {
     if(this.isOver()) return;
     this.score += deltaScore;
+    this.playSound(Game.scoreSoundBuffer);
     if(where) new ScoreParticles(this, deltaScore, where);
   }
 

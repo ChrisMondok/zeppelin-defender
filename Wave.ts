@@ -6,6 +6,9 @@ class Wave {
 
   duration = 0;
 
+  @fillWithAudioBuffer('sounds/round_start.ogg')
+  private static startSoundBuffer: AudioBuffer;
+
   constructor(readonly game: Game, readonly number: number){
     this.spawnList = [];
     const minimumSpawnDelay = 1000 / ((number + 4) / 5);
@@ -18,6 +21,8 @@ class Wave {
     while(this.spawnList.length < numberOfEnemies) {
       this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
       spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
+
+      this.game.playSound(Wave.startSoundBuffer);
     }
   }
 
