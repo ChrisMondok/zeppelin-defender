@@ -2,6 +2,7 @@ abstract class GameObject {
   x = 0;
   y = 0;
   z = 0;
+  destroyed = false;
 
   constructor(readonly game: Game) {
     game.add(this);
@@ -12,5 +13,6 @@ abstract class GameObject {
 
   destroy() {
     this.game.remove(this);
+    this.destroyed = true;
   }
 }

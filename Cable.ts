@@ -5,8 +5,6 @@
 class Cable extends GameObject {
   radius = 8;
 
-  destroyed = false;
-
   readonly snapSound: AudioBufferSourceNode;
 
   constructor(readonly platform: Platform, readonly offset: Point) {
@@ -47,7 +45,6 @@ class Cable extends GameObject {
 
   destroy() {
     super.destroy();
-    this.destroyed = true;
     this.snapSound.start(0);
   }
 
