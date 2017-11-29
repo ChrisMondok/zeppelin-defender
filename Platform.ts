@@ -17,8 +17,6 @@ class Platform extends GameObject {
 
   readonly cables: Cable[] = [];
 
-  readonly cutLooseSound: AudioBufferSourceNode;
-
   @fillWithImage('images/platform.jpeg')
   private platformTexture : HTMLImageElement;
 
@@ -31,14 +29,7 @@ class Platform extends GameObject {
     this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * -0.2}));
     this.cables.push(new Cable(this, {x: this.width * -0.2, y: this.height * 0.2}));
     this.cables.push(new Cable(this, {x: this.width * 0.2, y: this.height * 0.2}));
-
-    this.cutLooseSound = audioContext.createBufferSource();
-    this.cutLooseSound.buffer = Platform.cutLooseSoundBuffer;
-    this.cutLooseSound.connect(audioContext.destination);
   }
-
-  @fillWithAudioBuffer('sounds/Wilhelm_Scream.ogg')
-  private static cutLooseSoundBuffer: AudioBuffer;
 
   draw(context: CanvasRenderingContext2D) {
     context.translate(this.x, this.y - this.z/2);
@@ -86,7 +77,6 @@ class Platform extends GameObject {
       } else {
         this.velocity.z -= 9.8;
         this.isCutLoose = true;
-        this.cutLooseSound.start(0);
       }
     } else {
       this.velocity.z -= 9.8;

@@ -20,11 +20,17 @@ class Player extends GameObject {
 
   readonly deathSound: AudioBufferSourceNode;
 
+  readonly fallingSound: AudioBufferSourceNode;
+
   constructor(readonly game: Game) {
     super(game);
     this.deathSound = audioContext.createBufferSource();
     this.deathSound.buffer = Player.deathSoundBuffer;
     this.deathSound.connect(audioContext.destination);
+
+    this.fallingSound = audioContext.createBufferSource();
+    this.fallingSound.buffer = Player.fallingSoundBuffer;
+    this.fallingSound.connect(audioContext.destination);
   }
 
   tick(dt: number) {
@@ -51,6 +57,7 @@ class Player extends GameObject {
     }
 
     if(this.z < -200) {
+      this.fallingSound.start(0);
       this.destroy();
     }
   }
@@ -124,6 +131,10 @@ class Player extends GameObject {
 
   @fillWithAudioBuffer('sounds/ohno.wav')
   private static deathSoundBuffer: AudioBuffer;
+
+  @fillWithAudioBuffer('sounds/Wilhelm_Scream.ogg')
+  private static fallingSoundBuffer: AudioBuffer;
+
 
   private doPlatformInteraction() {
     if(this.platform) {
