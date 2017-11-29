@@ -1,6 +1,8 @@
 class ScoreParticles extends GameObject {
   ttl = ScoreParticles.ttl;
 
+  z = 10000;
+
   private static readonly ttl = 1000;
 
   readonly deltaScore: string;
