@@ -1,8 +1,5 @@
 /// <reference path="GameObject.ts"/>
 
-// Thanks IE.
-declare interface Math { log10: (n: number) => number; }
-
 class Hud extends GameObject {
   z = Infinity;
 

@@ -1,7 +1,3 @@
-interface Function {
-  name?: string;
-}
-
 interface Point {
   x: number;
   y: number;
