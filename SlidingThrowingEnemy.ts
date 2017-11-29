@@ -71,8 +71,8 @@ class SlidingThrowingEnemy extends GameObject {
 
   private *generateMoveList() {
     const directionFromCenter = direction(this.game.center, this);
-    const aimTime = 3000;
-    const shotsToFire = Math.floor(Math.random() * 5);
+    const aimTime = {easy: 3000, medium: 2000, hard: 1000}[this.game.wave.getDifficulty()];
+    const shotsToFire = {easy: 3, medium: 5, hard: 10}[this.game.wave.getDifficulty()];
 
     const center = {
       x: this.game.center.x + this.game.context.canvas.width * 0.3 * Math.cos(directionFromCenter),

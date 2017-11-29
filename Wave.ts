@@ -8,9 +8,10 @@ class Wave {
 
   constructor(readonly game: Game, readonly number: number){
     this.spawnList = [];
-    const minimumSpawnDelay = 1000;
+    const minimumSpawnDelay = 1000 / ((number + 4) / 5);
     const maximumSpawnDelay = 3000;
-    const numberOfEnemies = 5;
+    const numberOfEnemies = 1 + 5 * Math.floor(Math.log10(Math.pow(2 * number, 2)));
+    console.table({minimumSpawnDelay, numberOfEnemies});
 
     let spawnTime = Wave.initialDelay;
 
@@ -32,6 +33,12 @@ class Wave {
 
   isComplete() {
     return this.spawnList.length === 0 && this.enemies.length === 0;
+  }
+
+  getDifficulty(): 'easy' | 'medium' | 'hard' {
+    if(this.number < 5) return 'easy';
+    if(this.number < 10) return 'medium';
+    return 'hard';
   }
 
   private cullDeadEnemies() {
