@@ -9,11 +9,11 @@ class Hud extends GameObject {
 
   private dt: number = 0;
 
-  private readonly waveDisplayGradient: CanvasGradient;
+  private readonly messageGradient: CanvasGradient;
 
   constructor(game: Game) {
     super(game);
-    const g = this.waveDisplayGradient = game.context.createLinearGradient(0, 0, 0, game.context.canvas.height);
+    const g = this.messageGradient = game.context.createLinearGradient(0, 0, 0, game.context.canvas.height);
     g.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
     g.addColorStop(0.25, 'transparent');
     g.addColorStop(0.75, 'transparent');
@@ -29,14 +29,14 @@ class Hud extends GameObject {
   draw(context: CanvasRenderingContext2D) {
     this.drawFPS(context);
     this.drawLives(context);
-    this.drawScore(context);
 
-    if(this.game.paused) this.drawPaused(context);
-    else if(this.game.wave.duration < Wave.initialDelay) this.drawWave(context);
+    if(this.game.paused) this.drawMessage(context, 'Paused');
+    else if(this.game.lives === 0 && this.game.getObjectsOfType(Player).length === 0) this.drawMessage(context, 'Game Over');
+    else if(this.game.wave.duration < Wave.initialDelay) this.drawMessage(context, 'Wave', this.game.wave.number.toString());
   }
 
   private updateScore() {
-    while(Math.max(3, Math.floor(Math.log10(this.game.score) + 1)) > this.scoreDigits.length) {
+    while(Math.max(5, Math.floor(Math.log10(this.game.score) + 1)) > this.scoreDigits.length) {
       const d = new Digit(this.game)
       this.scoreDigits.push(d);
       d.x = this.game.context.canvas.width - this.padding - this.scoreDigits.length * Digit.width;
@@ -47,9 +47,6 @@ class Hud extends GameObject {
       const d = this.scoreDigits[i];
       d.number = Math.floor(this.game.score / Math.pow(10, i)) % 10;
     }
-  }
-
-  private drawScore(context: CanvasRenderingContext2D) {
   }
 
   private drawFPS(context: CanvasRenderingContext2D) {
@@ -69,25 +66,20 @@ class Hud extends GameObject {
     }
   }
 
-  private drawPaused(context: CanvasRenderingContext2D) {
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.font = "72px 'Poiret One'";
-    context.fillStyle = 'white';
-    context.strokeStyle = 'black';
-    drawTextOutlined(context, 'Paused', context.canvas.width/2, context.canvas.height/2);
-  }
-
-  private drawWave(context: CanvasRenderingContext2D) {
-    context.fillStyle = this.waveDisplayGradient;
+  private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {
+    const lineHeight = 72;
+    context.fillStyle = this.messageGradient;
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.font = "72px 'Poiret One'";
+    context.font = lineHeight+"px 'Poiret One'";
     context.fillStyle = 'white';
     context.strokeStyle = 'black';
-    drawTextOutlined(context, 'Wave', context.canvas.width/2, (context.canvas.height - 72)/2);
-    drawTextOutlined(context, this.game.wave.number.toString(), context.canvas.width/2, (context.canvas.height + 72)/2);
+
+    for(let i = 0; i < lines.length; i++) {
+      const yOffset = lines.length * lineHeight / -2 + lineHeight * i;
+      drawTextOutlined(context, lines[i], context.canvas.width/2, context.canvas.height/2 + yOffset);
+    }
   }
 }
 
