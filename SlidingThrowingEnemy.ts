@@ -59,14 +59,6 @@ class SlidingThrowingEnemy extends GameObject {
       context.strokeStyle = 'purple';
       context.stroke();
     }
-
-    if(this.currentDestination) {
-      context.beginPath();
-      context.moveTo(this.x, this.y);
-      context.lineTo(this.currentDestination.x, this.currentDestination.y);
-      context.strokeStyle = 'white';
-      context.stroke();
-    }
   }
 
   private *generateMoveList() {
