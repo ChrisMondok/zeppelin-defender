@@ -107,7 +107,7 @@ class Player extends GameObject {
     if(!this.platform) return;
     this.velocity.x += this.platform.velocity.x;
     this.velocity.y += this.platform.velocity.y;
-    this.velocity.z = 250;
+    this.velocity.z = 300;
     this.removeFromPlatform();
   }
 
