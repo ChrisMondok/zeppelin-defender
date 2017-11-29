@@ -93,10 +93,10 @@ class Digit extends GameObject {
 
   z = Infinity;
 
-  static readonly height = 48;
-  static readonly width = 42;
+  static readonly height = 36;
+  static readonly width = 32;
 
-  private static textHeight = 32;
+  private static textHeight = 24;
 
   private offset = 0;
 
