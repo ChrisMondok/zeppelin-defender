@@ -29,7 +29,7 @@ class Cable extends GameObject {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.translate(this.game.center.x, this.game.center.y);
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = 'black';
     ctx.strokeStyle = 'black';
     ctx.beginPath();
     ctx.arc(this.x - this.game.center.x, this.y - this.game.center.y, this.radius, 0, 2 * Math.PI, false);
