@@ -29,6 +29,7 @@ class Hud extends GameObject {
   draw(context: CanvasRenderingContext2D) {
     this.drawFPS(context);
     this.drawLives(context);
+    this.drawAmmo(context);
 
     if(this.game.paused) this.drawMessage(context, 'Paused');
     else if(this.game.isOver()) this.drawMessage(context, 'Game Over');
@@ -64,6 +65,41 @@ class Hud extends GameObject {
       context.arc(this.padding + 32 * i, this.padding, 12, 0, 2 * Math.PI, false);
       context.fill();
     }
+  }
+
+  private drawAmmo(context: CanvasRenderingContext2D) {
+    context.save();
+
+    const radius = 32;
+    context.translate(this.padding + radius, context.canvas.height - this.padding - radius);
+    context.beginPath();
+
+    context.fillStyle = 'silver';
+    context.strokeStyle = 'black';
+    context.lineWidth = 2;
+    for(let i = 0; i < 6; i++) {
+      const x = Math.cos(Math.PI * i/3) * radius/2;
+      const y = Math.sin(Math.PI * i/3) * radius/2;
+      context.arc(x, y, radius/2, 0, 2 * Math.PI);
+    }
+
+    context.stroke();
+    context.fill();
+
+    const player = this.game.getObjectsOfType(Player)[0];
+    const ammo = player ? player.ammo : 0;
+
+    for(let i = 0; i < 6 ; i++) {
+      context.beginPath();
+      const x = Math.cos(Math.PI * i/3) * radius/2;
+      const y = Math.sin(Math.PI * i/3) * radius/2;
+      context.arc(x, y, radius/5, 0, 2 * Math.PI);
+      context.fillStyle = (5-i) < ammo ? 'gold' : 'black';
+      context.fill();
+      context.stroke();
+    }
+
+    context.restore();
   }
 
   private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {

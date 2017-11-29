@@ -116,6 +116,7 @@ class Game {
       if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
         for(const cable of this.getObjectsOfType(Cable)) this.addScore(10, cable);
         this.wave = new Wave(this, this.wave.number + 1);
+        for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
       }
     }
 

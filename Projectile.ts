@@ -1,7 +1,7 @@
 @queryable
 class Projectile extends GameObject {
   z = 0;
-  speed = 200;
+  speed = 400;
 
   team: 'PLAYER' | 'ENEMY' = 'ENEMY';
 
@@ -37,6 +37,7 @@ class Buzzsaw extends Projectile {
   readonly WIDTH = 20;
   readonly ROTATIONAL_SPEED = 10;
   dir = 0;
+  speed = 200;
 
   @fillWithImage('images/buzzsaw.png')
   private static buzzsawImage : HTMLImageElement;

@@ -18,6 +18,8 @@ class Player extends GameObject {
 
   shield: Shield|null = null;
 
+  ammo = 6;
+
   readonly deathSound: AudioBufferSourceNode;
 
   readonly fallingSound: AudioBufferSourceNode;
@@ -98,6 +100,8 @@ class Player extends GameObject {
 
   @bindTo('press', {button: 2})
   fireProjectile() {
+    if(this.ammo <= 0) return;
+    this.ammo--;
     const projectile = new Projectile(this.game, this.x, this.y, this.direction);
     projectile.team = 'PLAYER';
   }
