@@ -9,6 +9,17 @@ class Hud extends GameObject {
 
   private dt: number = 0;
 
+  private readonly waveDisplayGradient: CanvasGradient;
+
+  constructor(game: Game) {
+    super(game);
+    const g = this.waveDisplayGradient = game.context.createLinearGradient(0, 0, 0, game.context.canvas.height);
+    g.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
+    g.addColorStop(0.25, 'transparent');
+    g.addColorStop(0.75, 'transparent');
+    g.addColorStop(1, 'rgba(0, 0, 0, 0.75)');
+  }
+
   tick(dt: number) {
     this.dt = dt;
 
@@ -19,7 +30,9 @@ class Hud extends GameObject {
     this.drawFPS(context);
     this.drawLives(context);
     this.drawScore(context);
+
     if(this.game.paused) this.drawPaused(context);
+    else if(this.game.wave.duration < Wave.initialDelay) this.drawWave(context);
   }
 
   private updateScore() {
@@ -62,9 +75,25 @@ class Hud extends GameObject {
     context.font = "72px 'Poiret One'";
     context.fillStyle = 'white';
     context.strokeStyle = 'black';
-    context.fillText('Paused', context.canvas.width/2, context.canvas.height/2);
-    context.strokeText('Paused', context.canvas.width/2, context.canvas.height/2);
+    drawTextOutlined(context, 'Paused', context.canvas.width/2, context.canvas.height/2);
   }
+
+  private drawWave(context: CanvasRenderingContext2D) {
+    context.fillStyle = this.waveDisplayGradient;
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.font = "72px 'Poiret One'";
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    drawTextOutlined(context, 'Wave', context.canvas.width/2, (context.canvas.height - 72)/2);
+    drawTextOutlined(context, this.game.wave.number.toString(), context.canvas.width/2, (context.canvas.height + 72)/2);
+  }
+}
+
+function drawTextOutlined(context: CanvasRenderingContext2D, text: string, x: number, y: number) {
+  context.fillText(text, x, y);
+  context.strokeText(text, x, y);
 }
 
 class Digit extends GameObject {

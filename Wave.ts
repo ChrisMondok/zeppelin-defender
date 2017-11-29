@@ -1,4 +1,6 @@
 class Wave {
+  static readonly initialDelay = 1000;
+
   readonly spawnList: SpawnInstruction[];
   readonly enemies: GameObject[] = [];
 
@@ -10,7 +12,7 @@ class Wave {
     const maximumSpawnDelay = 3000;
     const numberOfEnemies = 5;
 
-    let spawnTime = 1000;
+    let spawnTime = Wave.initialDelay;
 
     while(this.spawnList.length < numberOfEnemies) {
       this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });

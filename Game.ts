@@ -31,17 +31,15 @@ class Game {
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
-    new Hud(this);
-
     const canvas = document.querySelector('canvas')!;
     this.context = canvas.getContext('2d')!;
     this.center = {x: canvas.width / 2, y: canvas.height / 2}
     this.diagonalSize = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2));
 
+    new Hud(this);
     new Background(this);
     new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
-    new Target(this, (canvas.width / 2), (canvas.height/2));
 
     this.wave = new Wave(this, 1);
 
