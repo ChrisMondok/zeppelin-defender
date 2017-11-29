@@ -115,7 +115,7 @@ class Game {
 
       this.wave.tick(dt);
 
-      if(this.wave.isComplete()) {
+      if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
         this.score += this.getObjectsOfType(Cable).length * 10;
         this.wave = new Wave(this, this.wave.number + 1);
       }
