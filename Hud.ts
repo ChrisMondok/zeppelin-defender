@@ -19,6 +19,7 @@ class Hud extends GameObject {
     this.drawFPS(context);
     this.drawLives(context);
     this.drawScore(context);
+    if(this.game.paused) this.drawPaused(context);
   }
 
   private updateScore() {
@@ -53,6 +54,16 @@ class Hud extends GameObject {
       context.arc(this.padding + 32 * i, this.padding, 12, 0, 2 * Math.PI, false);
       context.fill();
     }
+  }
+
+  private drawPaused(context: CanvasRenderingContext2D) {
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.font = "72px 'Poiret One'";
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    context.fillText('Paused', context.canvas.width/2, context.canvas.height/2);
+    context.strokeText('Paused', context.canvas.width/2, context.canvas.height/2);
   }
 }
 

@@ -13,6 +13,8 @@ class Game {
 
   score = 0;
 
+  paused = false;
+
   private readonly objects: GameObject[] = [];
 
   private readonly objectsByType: {[key: number]: GameObject[]} = {};
@@ -41,12 +43,15 @@ class Game {
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
     new Target(this, (canvas.width / 2), (canvas.height/2));
 
-    this.wave = this.getNextWave(0);
+    this.wave = new Wave(this, 1);
 
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
     sound.connect(audioContext.destination);
     sound.start(0);
+
+    window.addEventListener('blur', () => this.paused = true);
+    window.addEventListener('focus', () => this.paused = false);
   }
 
   getObjectsOfType<T extends GameObject>(type: GameObjectType<T>) {
@@ -92,26 +97,28 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    this.gamepadInput.tick();
+    if(!this.paused) {
+      this.gamepadInput.tick();
 
-    for(let o of this.objects) {
-      if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
-      o.tick(dt);
-      if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
-    }
+      for(let o of this.objects) {
+        if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
+        o.tick(dt);
+        if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
+      }
 
-    if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
-    else this.timeSpentWithNoPlayers = 0;
+      if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
+      else this.timeSpentWithNoPlayers = 0;
 
-    if(this.timeSpentWithNoPlayers > 1000 && this.canSpawnPlayer()) {
-      this.spawnPlayer();
-    }
+      if(this.timeSpentWithNoPlayers > 1000 && this.canSpawnPlayer()) {
+        this.spawnPlayer();
+      }
 
-    this.wave.tick(dt);
+      this.wave.tick(dt);
 
-    if(this.wave.isComplete()) {
-      this.score += this.getObjectsOfType(Cable).length * 10;
-      this.wave = this.getNextWave(this.wave.number + 1);
+      if(this.wave.isComplete()) {
+        this.score += this.getObjectsOfType(Cable).length * 10;
+        this.wave = new Wave(this, this.wave.number + 1);
+      }
     }
 
     this.lastTick = ts;
