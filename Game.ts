@@ -20,9 +20,6 @@ class Game {
   @fillWithAudioBuffer('sounds/wind.ogg')
   private static windSoundBuffer: AudioBuffer;
 
-  @fillWithAudioBuffer('sounds/gymnopedies 1.ogg')
-  private static musicSoundBuffer: AudioBuffer;
-
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
@@ -39,14 +36,7 @@ class Game {
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
     sound.connect(audioContext.destination);
-    sound.loop = true;
     sound.start(0);
-
-    const music = audioContext.createBufferSource();
-    music.buffer = Game.musicSoundBuffer;
-    music.connect(audioContext.destination);
-    music.loop = true;
-    music.start(0);
   }
 
   getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
