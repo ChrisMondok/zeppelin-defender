@@ -12,7 +12,11 @@ function magnitude(x: number, y: number) {
   return Math.sqrt((x*x) + (y*y));
 }
 
-function clamp(a: Point, maxMag: number) {
+function clamp(number: number, min: number, max: number) {
+  return Math.max(min, Math.min(number, max));
+}
+
+function clampVector(a: Point, maxMag: number) {
   let m = magnitude(a.x, a.y);
   let ratio = m / maxMag
   return m < maxMag

@@ -82,10 +82,9 @@ class ExitMove extends DestinationMove {
 
   init() {
     const centerOfGame = {x: this.game.context.canvas.width/2, y: this.game.context.canvas.height/2};
-    const distanceToTravel = this.game.context.canvas.width / 2; // good enough?
     const dir = direction(centerOfGame, this.owner);
-    this.destination.x = this.game.center.y + Math.cos(dir) * this.game.diagonalSize / 2;
-    this.destination.y = this.game.center.x + Math.sin(dir) * this.game.diagonalSize / 2;
+    this.destination.x = this.game.center.y + Math.cos(dir) * this.game.diagonalSize;
+    this.destination.y = this.game.center.x + Math.sin(dir) * this.game.diagonalSize;
     this.hasStarted = true;
   }
 
@@ -102,16 +101,19 @@ class ExitMove extends DestinationMove {
 
 class AimMove extends WaitMove {
   aimTarget?: GameObject;
-  constructor(readonly owner: GameObject, public time: number, readonly target: string) {
+  constructor(readonly owner: GameObject, public time: number, readonly target: GameObjectType<GameObject>) {
     super(owner, time);
   }
 
   step(dt: number) {
-    if(!this.hasStarted)
-      this.init();
+    if(!this.hasStarted) this.init();
+
     const directive = super.step(dt);
-    if(this.aimTarget)
-      directive.aimTarget = {x: this.aimTarget.x, y: this.aimTarget.y};
+
+    if(this.aimTarget && this.aimTarget.destroyed) this.aimTarget = this.getAimTarget();
+
+    if(this.aimTarget) directive.aimTarget = {x: this.aimTarget.x, y: this.aimTarget.y};
+
     return directive;
   }
 
@@ -121,16 +123,7 @@ class AimMove extends WaitMove {
   }
 
   private getAimTarget() : GameObject|undefined {
-    switch (this.target) {
-      case 'player':
-        return this.owner.game.getObjectsOfType(Player)[0];
-      case 'cable':
-        const cables = this.owner.game.getObjectsOfType(Cable);
-        const closestCable = cables.sort((a, b) => distanceSquared(this.owner, a) - distanceSquared(this.owner, b))[0];
-        return closestCable || undefined;
-      default:
-        return undefined;
-    }
+    return this.owner.game.getObjectsOfType(this.target).sort((a, b) => distanceSquared(this.owner, a) - distanceSquared(this.owner, b))[0];
   }
 
 }

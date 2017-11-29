@@ -7,6 +7,8 @@ class Game {
 
   readonly diagonalSize: number;
 
+  wave: Wave;
+
   lives = 3;
 
   score = 0;
@@ -37,8 +39,9 @@ class Game {
     new Background(this);
     new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
     new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
-    new SlidingThrowingEnemy(this, {x: 300, y: 50});
     new Target(this, (canvas.width / 2), (canvas.height/2));
+
+    this.wave = this.getNextWave(0);
 
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
@@ -46,7 +49,7 @@ class Game {
     sound.start(0);
   }
 
-  getObjectsOfType<T extends GameObject>(type: {new(...args: any[]): T}) {
+  getObjectsOfType<T extends GameObject>(type: GameObjectType<T>) {
     if(!isQueryable(type)) throw new Error(`Type ${type.name} is not queryable. Add @queryable to its declaration.`);
     return this.objectsByType[type.__queryKey] as T[];
   }
@@ -100,8 +103,15 @@ class Game {
     if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
     else this.timeSpentWithNoPlayers = 0;
 
-    if(this.timeSpentWithNoPlayers > 1000 && this.canSpawn()) {
+    if(this.timeSpentWithNoPlayers > 1000 && this.canSpawnPlayer()) {
       this.spawnPlayer();
+    }
+
+    this.wave.tick(dt);
+
+    if(this.wave.isComplete()) {
+      this.score += this.getObjectsOfType(Cable).length * 10;
+      this.wave = this.getNextWave(this.wave.number + 1);
     }
 
     this.lastTick = ts;
@@ -123,7 +133,7 @@ class Game {
     return point.x >= 0 && point.y >= 0 && point.x <= this.context.canvas.width && point.y <= this.context.canvas.height;
   }
 
-  private canSpawn() {
+  private canSpawnPlayer() {
     return this.lives > 0 && this.getObjectsOfType(Platform).length > 0;
   }
 
@@ -133,6 +143,23 @@ class Game {
     const platform = this.getObjectsOfType(Platform)[0];
     p.x = platform.center.x;
     p.y = platform.center.y;
+  }
+
+  private getNextWave(number: number) {
+    console.log(`Wave ${number}`);
+    const instructions: SpawnInstruction[] = [];
+    const minimumSpawnDelay = 1000;
+    const maximumSpawnDelay = 3000;
+    const numberOfEnemies = 5;
+
+    let spawnTime = 1000;
+
+    while(instructions.length < numberOfEnemies) {
+      instructions.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
+      spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
+    }
+
+    return new Wave(this, number, instructions);
   }
 }
 

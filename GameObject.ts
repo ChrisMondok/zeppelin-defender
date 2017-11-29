@@ -16,3 +16,5 @@ abstract class GameObject {
     this.destroyed = true;
   }
 }
+
+type GameObjectType<T> = {new(...args: any[]): T};
