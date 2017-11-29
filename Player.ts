@@ -20,6 +20,10 @@ class Player extends GameObject {
 
   ammo = 6;
 
+  fireCooldown = 0;
+
+  static readonly reloadTime = 1000;
+
   constructor(readonly game: Game) {
     super(game);
   }
@@ -51,6 +55,8 @@ class Player extends GameObject {
       this.game.playSound(Player.fallingSoundBuffer);
       this.destroy();
     }
+
+    this.fireCooldown = Math.max(0, this.fireCooldown - dt);
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -89,8 +95,9 @@ class Player extends GameObject {
 
   @bindTo('press', {button: 2})
   fireProjectile() {
-    if(this.ammo <= 0) return;
+    if(this.ammo <= 0 || this.fireCooldown > 0) return;
     this.ammo--;
+    this.fireCooldown = Player.reloadTime;
     const projectile = new Projectile(this.game, this.x, this.y, this.direction);
     projectile.team = 'PLAYER';
   }
