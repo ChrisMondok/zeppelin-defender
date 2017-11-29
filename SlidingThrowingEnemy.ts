@@ -15,6 +15,11 @@ class SlidingThrowingEnemy extends GameObject {
   z = 2;
   radius = 25;
 
+  @fillWithAudioBuffer('sounds/boom.ogg')
+  private static boomSoundBuffer: AudioBuffer;
+
+  private boomSound: AudioBufferSourceNode;
+
   constructor(game: Game, spawnPoint: Point) {
     super(game);
     this.x = spawnPoint.x;
@@ -22,6 +27,10 @@ class SlidingThrowingEnemy extends GameObject {
     this.xpid = new PID(1, 0.00003, 200);
     this.ypid = new PID(1, 0.00003, 200);
     this.ai = new AI(this.game, this, Array.from(this.generateMoveList()));
+
+    this.boomSound = audioContext.createBufferSource();
+    this.boomSound.buffer = SlidingThrowingEnemy.boomSoundBuffer;
+    this.boomSound.connect(audioContext.destination);
   }
 
   tick(dt: number) {
@@ -131,6 +140,8 @@ class SlidingThrowingEnemy extends GameObject {
     for(const projectile of this.game.getObjectsOfType(Projectile)) {
       if(projectile.team === 'ENEMY') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
+        let sound = this.boomSound;
+        sound.start(0);
         this.destroy();
         this.game.addScore((projectile instanceof Buzzsaw) ? 500 : 100, this);
       }
