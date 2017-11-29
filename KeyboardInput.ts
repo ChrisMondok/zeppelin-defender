@@ -7,9 +7,11 @@ class KeyboardInput extends Input {
   static keyboardState: {[key: string]: boolean} = {};
 
   readonly map: KeyMap = {
-    BLOCK: 'Space',
+    BLOCK: 'KeyZ',
     FIRE: 'KeyX',
-    JUMP: 'KeyZ',
+    JUMP: 'Space',
+    RESUME: 'Space',
+    PAUSE: 'Escape',
     left: 'ArrowLeft',
     right: 'ArrowRight',
     up: 'ArrowUp',

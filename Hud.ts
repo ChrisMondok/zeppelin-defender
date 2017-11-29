@@ -32,7 +32,7 @@ class Hud extends GameObject {
     this.drawAmmo(context);
 
     if(this.game.paused) this.drawMessage(context, 'Paused');
-    else if(this.game.isOver()) this.drawMessage(context, 'Game Over');
+    else if(this.game.isOver()) this.drawGameOver(context);
     else if(this.game.wave.duration < Wave.initialDelay) this.drawMessage(context, 'Wave', this.game.wave.number.toString());
   }
 
@@ -105,6 +105,16 @@ class Hud extends GameObject {
     context.restore();
   }
 
+  private drawGameOver(context: CanvasRenderingContext2D) {
+    this.drawMessage(context, this.game.hasPlayed ? 'Game Over' : 'Zeppelin Defender');
+
+    if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
+      context.font = "24px 'Poiret One'";
+      context.fillStyle = 'white';
+      drawTextOutlined(context, 'Press Start or Space', this.game.center.x, this.game.center.y + 24);
+    }
+  }
+
   private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {
     const lineHeight = 72;
     context.fillStyle = this.messageGradient;
@@ -123,8 +133,9 @@ class Hud extends GameObject {
 }
 
 function drawTextOutlined(context: CanvasRenderingContext2D, text: string, x: number, y: number) {
-  context.fillText(text, x, y);
+  context.lineWidth = 2;
   context.strokeText(text, x, y);
+  context.fillText(text, x, y);
 }
 
 class Digit extends GameObject {

@@ -1,4 +1,4 @@
-type Action = 'JUMP' | 'BLOCK' | 'FIRE';
+type Action = 'JUMP' | 'BLOCK' | 'FIRE' | 'PAUSE' | 'RESUME';
 
 abstract class Input {
   wasPressed(button: Action) {
@@ -10,6 +10,8 @@ abstract class Input {
   }
 
   abstract getAxis(axis: number): number;
+
+  abstract tick(): void;
 
   protected copyOldState() {
     for(let key in this.state.buttons) {
@@ -23,12 +25,12 @@ abstract class Input {
   }
 
   protected readonly previousState: InputSnapshot = {
-    buttons: {BLOCK: false, JUMP: false, FIRE: false},
+    buttons: {BLOCK: false, JUMP: false, FIRE: false, PAUSE: false, RESUME: false},
     axes: {}
   };
 
   protected readonly state: InputSnapshot = {
-    buttons: {BLOCK: false, JUMP: false, FIRE: false},
+    buttons: {BLOCK: false, JUMP: false, FIRE: false, PAUSE: false, RESUME: false},
     axes: {}
   };
 }

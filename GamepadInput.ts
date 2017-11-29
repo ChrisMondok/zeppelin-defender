@@ -10,20 +10,26 @@ class GamepadInput extends Input {
   readonly map: ButtonMap = {
     JUMP: 0,
     BLOCK: 1,
-    FIRE: 2
+    FIRE: 2,
+    PAUSE: -1,
+    RESUME: -1,
   }
 
   tick() {
     const gamepad = this.gamepad;
 
     this.copyOldState();
-    if(gamepad) this.readState(gamepad);
+    if(gamepad) {
+      this.updateMap(gamepad);
+      this.readState(gamepad);
+    }
     else this.clearState();
   }
 
   getAxis(axis: number) {
     const gamepad = this.gamepad;
     if(!gamepad) return 0;
+    this.updateMap(gamepad);
     const raw = gamepad.axes[axis];
     return this.isDeadZone(raw) ? 0 : raw;
   }
@@ -51,5 +57,10 @@ class GamepadInput extends Input {
 
   private isDeadZone(raw: number) {
     return Math.abs(raw)<0.2;
+  }
+
+  private updateMap(gamepad: Gamepad) {
+    this.map.PAUSE = gamepad.mapping === 'standard' ? 9 : 7;
+    this.map.RESUME = this.map.PAUSE;
   }
 }

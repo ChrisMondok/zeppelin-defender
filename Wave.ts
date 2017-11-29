@@ -9,20 +9,22 @@ class Wave {
   @fillWithAudioBuffer('sounds/round_start.ogg')
   private static startSoundBuffer: AudioBuffer;
 
-  constructor(readonly game: Game, readonly number: number){
+  constructor(readonly game: Game, readonly number: number) {
     this.spawnList = [];
-    const minimumSpawnDelay = 1000 / ((number + 4) / 5);
-    const maximumSpawnDelay = 3000;
-    const numberOfEnemies = 1 + 5 * Math.floor(Math.log10(Math.pow(2 * number, 2)));
-    console.table({minimumSpawnDelay, numberOfEnemies});
+    if(this.number > 0) {
+      const minimumSpawnDelay = 1000 / ((number + 4) / 5);
+      const maximumSpawnDelay = 3000;
+      const numberOfEnemies = 1 + 5 * Math.floor(Math.log10(Math.pow(2 * number, 2)));
+      console.table({minimumSpawnDelay, numberOfEnemies});
 
-    let spawnTime = Wave.initialDelay;
+      let spawnTime = Wave.initialDelay;
 
-    while(this.spawnList.length < numberOfEnemies) {
-      this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
-      spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
+      while(this.spawnList.length < numberOfEnemies) {
+        this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
+        spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
 
-      this.game.playSound(Wave.startSoundBuffer);
+        this.game.playSound(Wave.startSoundBuffer);
+      }
     }
   }
 

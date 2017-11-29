@@ -9,13 +9,17 @@ class Game {
 
   readonly diagonalSize: number;
 
-  wave: Wave;
+  wave: Wave = new Wave(this, 0);
 
-  lives = 3;
+  lives = 0;
 
   score = 0;
 
   paused = false;
+
+  timeSpentWithNoPlayers = 0;
+
+  hasPlayed = false;
 
   private readonly objects: GameObject[] = [];
 
@@ -24,8 +28,9 @@ class Game {
   private lastTick: number|null = null;
 
   private readonly gamepadInput = new GamepadInput(0);
+  private readonly keyboardInput = new KeyboardInput();
 
-  private timeSpentWithNoPlayers = 0;
+  private inputMethod: Input = this.gamepadInput;
 
   @fillWithAudioBuffer('sounds/bing.ogg')
   private static scoreSoundBuffer: AudioBuffer;
@@ -50,22 +55,26 @@ class Game {
 
     this.playSound(Game.windSoundBuffer);
 
-    window.addEventListener('blur', () => this.paused = true);
-    window.addEventListener('focus', () => this.paused = false);
+    window.addEventListener('blur', () => {
+      if(!this.isOver()) this.paused = true;
+    });
 
-    this.reset();
+    new Hud(this);
+    new Background(this);
   }
 
-  reset() {
+  reset(input: Input) {
+    this.hasPlayed = true;
+    this.inputMethod = input;
     while(this.objects.length) {
       const o = this.objects.pop()!;
-      console.log("Removing "+o.constructor.name);
       o.destroy();
     }
 
     new Hud(this);
     new Background(this);
 
+    this.lives = 3;
     this.score = 0;
 
     new Platform(this, {x: this.center.x - 200, y: this.center.y});
@@ -114,13 +123,16 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-    if(!this.paused) {
       this.gamepadInput.tick();
+    this.keyboardInput.tick();
 
+    if(this.paused) {
+      if (this.inputMethod.wasPressed('RESUME')) this.paused = false;
+    } else {
       for(let o of this.objects) {
-        if(hasBindings(o)) o.doAxisBindings(this.gamepadInput);
+        if(hasBindings(o)) o.doAxisBindings(this.inputMethod);
         o.tick(dt);
-        if(hasBindings(o)) o.doButtonBindings(this.gamepadInput);
+        if(hasBindings(o)) o.doButtonBindings(this.inputMethod);
       }
 
       if(!this.getObjectsOfType(Player).length) this.timeSpentWithNoPlayers+=dt;
@@ -132,11 +144,18 @@ class Game {
 
       this.wave.tick(dt);
 
+      if(this.isOver()) {
+        if(this.gamepadInput.wasPressed('RESUME')) this.reset(this.gamepadInput);
+        else if(this.keyboardInput.wasPressed('RESUME')) this.reset(this.keyboardInput);
+      } else {
+        if(this.inputMethod.wasPressed('PAUSE')) this.paused = true;
+
       if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
         for(const cable of this.getObjectsOfType(Cable)) this.addScore(10, cable);
         this.wave = new Wave(this, this.wave.number + 1);
         for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
       }
+    }
     }
 
     this.lastTick = ts;
