@@ -25,7 +25,7 @@ class AI {
   }
 
   loadMove() {
-    this.currentMove = this.moveList.shift() ||  new WaitMove(this.owner, 999999999);
+    this.currentMove = this.moveList.shift() ||  new ExitMove(this.owner, this.game);
   }
    
 }
@@ -63,11 +63,40 @@ class DestinationMove implements Move {
   public isComplete = false;
   constructor(readonly owner: GameObject, readonly destination: Point) {}
 
-  step(dt: number) {
+  step(dt: number): AIDirective {
     if(magnitude(this.owner.x - this.destination.x, this.owner.y - this.destination.y) < 5) {
       this.isComplete = true;
     }
     return { destination: this.destination };
+  }
+}
+
+class ExitMove extends DestinationMove {
+  hasStarted = false;
+
+  private static readonly destroyDirective = { shouldDestroy: true };
+
+  constructor(owner: GameObject, readonly game: Game) {
+    super(owner, {x: 100, y: 100});
+  }
+
+  init() {
+    const centerOfGame = {x: this.game.context.canvas.width/2, y: this.game.context.canvas.height/2};
+    const distanceToTravel = this.game.context.canvas.width / 2; // good enough?
+    const dir = direction(centerOfGame, this.owner);
+    this.destination.x = Math.cos(dir) * distanceToTravel;
+    this.destination.y = Math.sin(dir) * distanceToTravel;
+    this.hasStarted = true;
+  }
+
+  step(dt: number) {
+    if(!this.hasStarted) this.init();
+    const dest = super.step(dt);
+    if(this.isComplete) {
+      this.isComplete = false;
+      return ExitMove.destroyDirective;
+    }
+    else return dest;
   }
 }
 
@@ -120,4 +149,5 @@ interface AIDirective {
   destination? : Point;
   aimTarget? : Point;
   shouldFire? : boolean;
+  shouldDestroy? : boolean;
 }

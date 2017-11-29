@@ -32,7 +32,6 @@ class SlidingThrowingEnemy extends GameObject {
       new AimMove(this, 1000, 'cable'),
       new FireMove(this),
       new WaitMove(this, 2000),
-      new DestinationMove(this, { x: 400, y: 400 }),
     ]);
   }
 
@@ -49,6 +48,8 @@ class SlidingThrowingEnemy extends GameObject {
       this.fire();
       this.currentAimTarget = undefined;
     }
+
+    if(directive.shouldDestroy) this.destroy();
 
     this.doProjectileInteraction();
   }
