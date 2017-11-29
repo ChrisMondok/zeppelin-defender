@@ -36,13 +36,6 @@ class Game {
     this.center = {x: canvas.width / 2, y: canvas.height / 2}
     this.diagonalSize = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2));
 
-    new Hud(this);
-    new Background(this);
-    new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
-    new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
-
-    this.wave = new Wave(this, 1);
-
     const sound = audioContext.createBufferSource();
     sound.buffer = Game.windSoundBuffer;
     sound.connect(audioContext.destination);
@@ -50,6 +43,26 @@ class Game {
 
     window.addEventListener('blur', () => this.paused = true);
     window.addEventListener('focus', () => this.paused = false);
+
+    this.reset();
+  }
+
+  reset() {
+    while(this.objects.length) {
+      const o = this.objects.pop()!;
+      console.log("Removing "+o.constructor.name);
+      o.destroy();
+    }
+
+    new Hud(this);
+    new Background(this);
+
+    this.score = 0;
+
+    new Platform(this, {x: this.center.x - 200, y: this.center.y});
+    new Platform(this, {x: this.center.x + 200, y: this.center.y});
+
+    this.wave = new Wave(this, 1);
   }
 
   getObjectsOfType<T extends GameObject>(type: GameObjectType<T>) {
@@ -70,10 +83,7 @@ class Game {
 
   remove(thing: GameObject) {
     const index = this.objects.indexOf(thing);
-    if(index === -1) {
-      console.error("Trying to remove a thing we don't know about!");
-      return;
-    }
+    if(index === -1) return;
     this.objects.splice(index, 1);
 
     if(isQueryable(thing.constructor)) {
