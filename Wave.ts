@@ -1,5 +1,5 @@
 class Wave {
-  static readonly initialDelay = 1000;
+  static readonly initialDelay = 2500;
 
   readonly spawnList: SpawnInstruction[];
   readonly enemies: GameObject[] = [];
