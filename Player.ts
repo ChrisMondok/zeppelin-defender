@@ -20,19 +20,8 @@ class Player extends GameObject {
 
   ammo = 6;
 
-  readonly deathSound: AudioBufferSourceNode;
-
-  readonly fallingSound: AudioBufferSourceNode;
-
   constructor(readonly game: Game) {
     super(game);
-    this.deathSound = audioContext.createBufferSource();
-    this.deathSound.buffer = Player.deathSoundBuffer;
-    this.deathSound.connect(audioContext.destination);
-
-    this.fallingSound = audioContext.createBufferSource();
-    this.fallingSound.buffer = Player.fallingSoundBuffer;
-    this.fallingSound.connect(audioContext.destination);
   }
 
   tick(dt: number) {
@@ -59,7 +48,7 @@ class Player extends GameObject {
     }
 
     if(this.z < -200) {
-      this.fallingSound.start(0);
+      this.game.playSound(Player.fallingSoundBuffer);
       this.destroy();
     }
   }
@@ -190,7 +179,7 @@ class Player extends GameObject {
       if(projectile.team === 'PLAYER') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
         this.destroy();
-        this.deathSound.start(0);
+        this.game.playSound(Player.deathSoundBuffer);
       }
     }
   }

@@ -7,10 +7,7 @@ class Projectile extends GameObject {
 
   constructor(readonly game: Game, public x: number, public y: number, public direction: number) {
     super(game);
-    const sound = audioContext.createBufferSource();
-    sound.buffer = this.fireSoundBuffer;
-    sound.connect(audioContext.destination);
-    sound.start(0);
+    this.game.playSound(this.fireSoundBuffer);
   }
 
   tick(dt: number) {

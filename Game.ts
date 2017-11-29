@@ -152,6 +152,15 @@ class Game {
 
   }
 
+  playSound(buffer: AudioBuffer) {
+    if (this.paused) return;
+    const sound = audioContext.createBufferSource();
+    sound.buffer = buffer;
+    sound.connect(audioContext.destination);
+    sound.start(0);
+  }
+    
+
   private canSpawnPlayer() {
     return this.lives > 0 && this.getObjectsOfType(Platform).length > 0;
   }
