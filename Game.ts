@@ -99,8 +99,7 @@ class Game {
 
   remove(thing: GameObject) {
     const index = this.objects.indexOf(thing);
-    if(index === -1) return;
-    this.objects.splice(index, 1);
+    if(index !== -1) this.objects.splice(index, 1);
 
     if(isQueryable(thing.constructor)) {
       for(const queryableType of Game.queryableTypes) {
@@ -109,11 +108,7 @@ class Game {
         const queryList = this.objectsByType[queryableType.__queryKey];
 
         const index = queryList.indexOf(thing);
-        if(index === -1) {
-          console.error("Trying to remove a thing from a query list it's not in!");
-          return;
-        }
-        queryList.splice(index, 1);
+        if(index !== -1) queryList.splice(index, 1);
       }
     }
   }
