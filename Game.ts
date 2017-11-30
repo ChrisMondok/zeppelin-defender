@@ -38,6 +38,9 @@ class Game {
   @fillWithAudioBuffer('sounds/wind.ogg')
   private static windSoundBuffer: AudioBuffer;
 
+  @fillWithAudioBuffer('sounds/newlife.ogg')
+  private static newLifeSoundBuffer: AudioBuffer;
+
   constructor () {
     for(const type of Game.queryableTypes) this.objectsByType[(type as any).__queryKey] = [];
 
@@ -199,6 +202,10 @@ class Game {
       delay += 120;
     }
     this.wave = new Wave(this, this.wave.number + 1);
+    if(this.wave.number % 5 === 0) {
+      this.lives++;
+      this.playSound(Game.newLifeSoundBuffer);
+    }
     for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
   }
 
