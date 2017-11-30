@@ -48,8 +48,6 @@ class Game {
 
     new Hud(this);
     new Background(this);
-    new Platform(this, {x: canvas.width / 2 - 200, y: canvas.height/2});
-    new Platform(this, {x: canvas.width / 2 + 200, y: canvas.height/2});
 
     this.wave = new Wave(this, 1);
 
