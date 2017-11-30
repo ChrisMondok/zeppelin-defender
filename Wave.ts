@@ -22,9 +22,9 @@ class Wave {
       while(this.spawnList.length < numberOfEnemies) {
         this.spawnList.push({ enemyType: SlidingThrowingEnemy, numberOfMoves: 10, spawnTime: spawnTime });
         spawnTime += minimumSpawnDelay + Math.random() * (maximumSpawnDelay - minimumSpawnDelay);
-
-        this.game.playSound(Wave.startSoundBuffer);
       }
+
+      this.game.playSound(Wave.startSoundBuffer);
     }
   }
 

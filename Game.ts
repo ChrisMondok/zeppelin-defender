@@ -143,12 +143,10 @@ class Game {
       } else {
         if(this.inputMethod.wasPressed('PAUSE')) this.paused = true;
 
-      if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
-        for(const cable of this.getObjectsOfType(Cable)) this.addScore(10, cable);
-        this.wave = new Wave(this, this.wave.number + 1);
-        for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
+        if(this.wave.isComplete() && this.getObjectsOfType(Projectile).length === 0) {
+          this.advanceToNextWave();
+        }
       }
-    }
     }
 
     this.lastTick = ts;
@@ -173,7 +171,6 @@ class Game {
   addScore(deltaScore: number, where?: Point) {
     if(this.isOver()) return;
     this.score += deltaScore;
-    this.playSound(Game.scoreSoundBuffer);
     if(where) new ScoreParticles(this, deltaScore, where);
   }
 
@@ -181,7 +178,6 @@ class Game {
     if(this.getObjectsOfType(Player).length > 0) return false;
 
     return !this.canSpawnPlayer();
-
   }
 
   playSound(buffer: AudioBuffer) {
@@ -192,6 +188,19 @@ class Game {
     sound.start(0);
   }
     
+  private advanceToNextWave() {
+    let delay = 0;
+    for(const cable of this.getObjectsOfType(Cable)) {
+      // Yeah this isn't based on dt, sue me.
+      setTimeout(() => {
+        this.playSound(Game.scoreSoundBuffer);
+        this.addScore(10, cable);
+      }, delay);
+      delay += 120;
+    }
+    this.wave = new Wave(this, this.wave.number + 1);
+    for(const player of this.getObjectsOfType(Player)) player.ammo = 6;
+  }
 
   private canSpawnPlayer() {
     return this.lives > 0 && this.getObjectsOfType(Platform).length > 0;
