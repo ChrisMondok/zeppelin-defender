@@ -49,7 +49,7 @@ class Game {
     new Hud(this);
     new Background(this);
 
-    this.wave = new Wave(this, 1);
+    this.wave = new Wave(this, 0);
 
     this.playSound(Game.windSoundBuffer);
 
