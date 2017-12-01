@@ -1,9 +1,18 @@
 /// <reference path="GameObject.ts"/>
 
+function getHighScore() {
+  let scoreString: string;
+  try {
+    scoreString = localStorage.getItem('highScore') || "0";
+  }
+  catch (e) { scoreString = "0"; }
+  return Number(scoreString);
+}
+
 class Game {
   static queryableTypes: QueryableType[] = [];
 
-  static highScore = Number(localStorage.getItem('highScore') || 0);
+  static highScore = getHighScore();
 
   readonly context: CanvasRenderingContext2D;
 
@@ -182,7 +191,9 @@ class Game {
     if(where) new ScoreParticles(this, deltaScore, where);
     if(this.score > Game.highScore) {
       Game.highScore = this.score;
-      localStorage.setItem('highScore', this.score.toString());
+      try {
+        localStorage.setItem('highScore', this.score.toString());
+      } catch(e) {}
     }
   }
 
