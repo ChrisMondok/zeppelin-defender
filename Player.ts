@@ -53,11 +53,7 @@ class Player extends GameObject {
 
     this.doBulletInteraction();
 
-    if(this.shield) {
-      this.shield.x = this.x + (1.1 * this.radius + this.shield.thickness/2) * Math.cos(this.direction);
-      this.shield.y = this.y + (1.1 * this.radius + this.shield.thickness/2) * Math.sin(this.direction);
-      this.shield.direction = this.direction;
-    }
+    this.positionShield();
 
     if(this.z < -200) {
       this.game.playSound(Player.fallingSoundBuffer);
@@ -125,6 +121,7 @@ class Player extends GameObject {
   block() {
     if(this.shield) return;
     this.shield = new Shield(this.game);
+    this.positionShield();
   }
 
   @bindTo('BLOCK', 'release')
@@ -141,6 +138,13 @@ class Player extends GameObject {
 
   isInvincible() {
     return this.lifetime < 3000;
+  }
+
+  private positionShield() {
+    if(!this.shield) return;
+    this.shield.x = this.x + (1.1 * this.radius + this.shield.thickness/2) * Math.cos(this.direction);
+    this.shield.y = this.y + (1.1 * this.radius + this.shield.thickness/2) * Math.sin(this.direction);
+    this.shield.direction = this.direction;
   }
 
   @fillWithAudioBuffer('sounds/ohno.wav')
