@@ -33,7 +33,7 @@ class Hud extends GameObject {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    this.drawFPS(context);
+    //this.drawFPS(context);
     this.drawLives(context);
     this.drawAmmo(context);
 

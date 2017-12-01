@@ -15,7 +15,6 @@ class Wave {
       const minimumSpawnDelay = 1000 / ((number + 4) / 5);
       const maximumSpawnDelay = 3000;
       const numberOfEnemies = 1 + 3 * Math.floor(Math.log10(Math.pow(3 * number, 2)));
-      console.table({minimumSpawnDelay, numberOfEnemies});
 
       let spawnTime = Wave.initialDelay;
 
