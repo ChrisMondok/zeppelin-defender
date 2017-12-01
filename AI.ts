@@ -123,7 +123,12 @@ class AimMove extends WaitMove {
   }
 
   private getAimTarget() : GameObject|undefined {
-    return this.owner.game.getObjectsOfType(this.target).sort((a, b) => distanceSquared(this.owner, a) - distanceSquared(this.owner, b))[0];
+    const minTargetDistance = 60;
+    return this.owner.game.getObjectsOfType(this.target)
+      .map(target => ({target, d2: distanceSquared(this.owner, target)}))
+      .filter(t => t.d2 > Math.pow(minTargetDistance, 2))
+      .sort((a, b) => a.d2 - b.d2)
+      .map(t => t.target)[0];
   }
 
 }
