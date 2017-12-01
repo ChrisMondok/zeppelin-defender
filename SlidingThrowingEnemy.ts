@@ -126,8 +126,8 @@ class SlidingThrowingEnemy extends GameObject {
     context.translate(this.x, this.y)
     context.rotate(this.direction + (Math.PI / 2));
     context.fillStyle = 'white';
-    context.font = '40px sans-serif';
-    context.fillText('☠', -20, 15);
+    context.font = '36px sans-serif';
+    context.fillText('☠', -18, 15);
     for(let i=0; i<this.numberOfProps; i++) {
       context.save();
       context.rotate(this.propRotation + (2 * i * (Math.PI / this.numberOfProps)));
