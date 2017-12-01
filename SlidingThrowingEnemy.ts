@@ -67,12 +67,14 @@ class SlidingThrowingEnemy extends GameObject {
     this.panNode.setPosition((this.x - this.game.center.x) / this.game.diagonalSize, (this.y - this.game.center.y) / this.game.diagonalSize, 1);
     const directive = this.ai.step(dt);
     this.currentDestination = directive.destination;
+    this.currentAimTarget = directive.aimTarget || this.currentAimTarget;
+
     if(this.currentDestination) {
+      this.adjustTarget(this.currentDestination);
       this.seekTarget(this.currentDestination, dt)
     }
     this.applyAccelerationAndVelocity();
 
-    this.currentAimTarget = directive.aimTarget || this.currentAimTarget;
     if(directive.shouldFire) {
       this.fire();
       this.currentAimTarget = undefined;
@@ -84,6 +86,24 @@ class SlidingThrowingEnemy extends GameObject {
 
     this.propRotation += .15 + (Math.random() * 0.1);
     this.direction = this.currentAimTarget ? direction(this, this.currentAimTarget) : direction(this.velocity, {x:0, y:0});
+  }
+
+  private adjustTarget(target: Point) {
+    if(!(this.game.inputMethod instanceof KeyboardInput)) return;
+    if(!this.currentAimTarget) return;
+    const dist = Math.sqrt(distanceSquared(target, this.currentAimTarget));
+
+    const oneEightRotation = Math.PI/4;
+
+    let dir = direction(this.currentAimTarget, target);
+    dir = Math.floor(dir / oneEightRotation) * oneEightRotation;
+
+    target.x = clamp(Math.cos(dir) * dist + this.currentAimTarget.x,
+      this.radius,
+      this.game.context.canvas.width - this.radius);
+    target.y = clamp(Math.sin(dir) * dist + this.currentAimTarget.y,
+      this.radius,
+      this.game.context.canvas.height - this.radius);
   }
 
   draw(context: CanvasRenderingContext2D) {

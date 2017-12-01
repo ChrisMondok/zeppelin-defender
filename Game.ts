@@ -32,7 +32,7 @@ class Game {
   private readonly gamepadInput = new GamepadInput(0);
   private readonly keyboardInput = new KeyboardInput();
 
-  private inputMethod: Input = this.gamepadInput;
+  inputMethod: Input = this.gamepadInput;
 
   @fillWithAudioBuffer('sounds/bing.ogg')
   private static scoreSoundBuffer: AudioBuffer;
@@ -122,7 +122,7 @@ class Game {
   tick(ts: number) {
     const dt = this.lastTick === null ? 0 : ts - this.lastTick;
 
-      this.gamepadInput.tick();
+    this.gamepadInput.tick();
     this.keyboardInput.tick();
 
     if(this.paused) {
