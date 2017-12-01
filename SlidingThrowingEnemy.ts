@@ -202,8 +202,12 @@ class SlidingThrowingEnemy extends GameObject {
   }
 
   private fire() {
-    if(this.currentAimTarget)
-      new Buzzsaw(this.game, this.x, this.y, direction(this, this.currentAimTarget));
+    if(this.currentAimTarget) {
+      const fireDirection = direction(this, this.currentAimTarget);
+      new Buzzsaw(this.game, this.x, this.y, fireDirection);
+      this.velocity.x += -5 * Math.cos(fireDirection);
+      this.velocity.y += -5 * Math.sin(fireDirection);
+    }
   }
 
   private doProjectileInteraction() {
