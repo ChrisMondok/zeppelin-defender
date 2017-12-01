@@ -11,6 +11,12 @@ class Hud extends GameObject {
 
   private readonly messageGradient: CanvasGradient;
 
+  @fillWithImage('images/title.png')
+  private titleImage : HTMLImageElement;
+
+  @fillWithImage('images/title2.png')
+  private titleImageWithPressStart : HTMLImageElement;
+
   constructor(game: Game) {
     super(game);
     const g = this.messageGradient = game.context.createLinearGradient(0, 0, 0, game.context.canvas.height);
@@ -106,13 +112,21 @@ class Hud extends GameObject {
   }
 
   private drawGameOver(context: CanvasRenderingContext2D) {
-    this.drawMessage(context, this.game.hasPlayed ? 'Game Over' : 'Zeppelin Defender');
-
-    if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
-      context.font = "24px 'Poiret One'";
-      context.fillStyle = 'white';
-      drawTextOutlined(context, 'Press Start or Space', this.game.center.x, this.game.center.y + 24);
+    if(this.game.hasPlayed) {
+      this.drawMessage(context, 'Game Over');
+      if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
+        context.font = "24px 'Poiret One'";
+        context.fillStyle = 'white';
+        drawTextOutlined(context, 'Press Start or Space', this.game.center.x, this.game.center.y + 24);
+      }
+    } else {
+      if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
+        context.drawImage(this.titleImage, 50,25, 640, 480);
+      } else {
+        context.drawImage(this.titleImageWithPressStart, 50,25, 640, 480);
+      }
     }
+
   }
 
   private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {
