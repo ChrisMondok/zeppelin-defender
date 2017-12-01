@@ -15,6 +15,7 @@ class SlidingThrowingEnemy extends GameObject {
   z = 2;
   radius = 25;
 
+  direction: number;
   private ambientSound: AudioBufferSourceNode;
   private panNode: PannerNode;
 
@@ -82,6 +83,7 @@ class SlidingThrowingEnemy extends GameObject {
     this.doProjectileInteraction();
 
     this.propRotation += .15 + (Math.random() * 0.1);
+    this.direction = this.currentAimTarget ? direction(this, this.currentAimTarget) : direction(this.velocity, {x:0, y:0});
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -102,6 +104,10 @@ class SlidingThrowingEnemy extends GameObject {
     }
 
     context.translate(this.x, this.y)
+    context.rotate(this.direction + (Math.PI / 2));
+    context.fillStyle = 'white';
+    context.font = '40px sans-serif';
+    context.fillText('☠', -20, 15);
     for(let i=0; i<this.numberOfProps; i++) {
       context.save();
       context.rotate(this.propRotation + (2 * i * (Math.PI / this.numberOfProps)));
