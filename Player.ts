@@ -28,6 +28,9 @@ class Player extends GameObject {
 
   static readonly reloadTime = 1000;
 
+  @fillWithImage('images/player.png')
+  private playerImage : HTMLImageElement;
+
   constructor(readonly game: Game) {
     super(game);
   }
@@ -86,7 +89,8 @@ class Player extends GameObject {
     const scale = Math.max(0, 1 + this.z/200);
     context.scale(scale, scale);
     context.rotate(this.direction);
-    context.beginPath();
+    context.drawImage(this.playerImage, -12, -12, 24, 24);
+  /*  context.beginPath();
     context.fillStyle = 'red';
     context.arc(0, 0, this.radius, 0, 2 * Math.PI);
     context.fill();
@@ -96,6 +100,7 @@ class Player extends GameObject {
     context.moveTo(0, 0);
     context.lineTo(this.radius, 0);
     context.stroke()
+    */
   }
 
   @bindTo('FIRE', 'press')
