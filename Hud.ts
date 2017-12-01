@@ -14,7 +14,7 @@ class Hud extends GameObject {
   @fillWithImage('images/title.png')
   private titleImage : HTMLImageElement;
 
-  @fillWithImage('images/title2.png')
+  @fillWithImage(navigator.userAgent.indexOf('Xbox') === -1 ? 'images/title2.png' : 'images/titlex.png')
   private titleImageWithPressStart : HTMLImageElement;
 
   constructor(game: Game) {

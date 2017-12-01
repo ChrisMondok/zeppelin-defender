@@ -28,6 +28,7 @@ window.addEventListener('load', () => {
 const audioContext = new AudioContext();
 
 function fillWithAudioBuffer(url: string): PropertyDecorator {
+  if(navigator.userAgent.indexOf('Edge') > -1) url = url.replace(/\.ogg$/,'.mp3');
   return function(target: any, propertyKey: string) {
     addAsset(
       fetch(url)

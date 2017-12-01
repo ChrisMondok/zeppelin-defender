@@ -61,6 +61,6 @@ class GamepadInput extends Input {
 
   private updateMap(gamepad: Gamepad) {
     this.map.PAUSE = gamepad.mapping === 'standard' ? 9 : 7;
-    this.map.RESUME = this.map.PAUSE;
+    this.map.RESUME = navigator.userAgent.indexOf('Xbox') > -1 ? this.map.JUMP : this.map.PAUSE;
   }
 }
