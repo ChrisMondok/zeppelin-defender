@@ -43,7 +43,8 @@ class Hud extends GameObject {
   }
 
   private updateScore() {
-    while(Math.max(5, Math.floor(Math.log10(this.game.score) + 1)) > this.scoreDigits.length) {
+    const score = this.shouldShowHighScore() ? Game.highScore : this.game.score;
+    while(Math.max(5, Math.floor(Math.log10(score) + 1)) > this.scoreDigits.length) {
       const d = new Digit(this.game)
       this.scoreDigits.push(d);
       d.x = this.game.context.canvas.width - this.padding - this.scoreDigits.length * Digit.width;
@@ -52,7 +53,7 @@ class Hud extends GameObject {
 
     for(let i = 0; i < this.scoreDigits.length; i++) {
       const d = this.scoreDigits[i];
-      d.number = Math.floor(this.game.score / Math.pow(10, i)) % 10;
+      d.number = Math.floor(score / Math.pow(10, i)) % 10;
     }
   }
 
@@ -128,6 +129,20 @@ class Hud extends GameObject {
       }
     }
 
+    const scoreMessage = this.shouldShowHighScore() ? 'High Score' : 'Your Score';
+    context.font = "24px 'Poiret One'";
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    context.textAlign = 'right';
+    context.textBaseline = 'middle';
+    const x = this.scoreDigits.map(d => d.x).reduce((a, b) => Math.min(a, b)) - this.padding;
+    drawTextOutlined(context, scoreMessage, x, this.padding + Digit.height / 2);
+  }
+
+  private shouldShowHighScore() {
+    if(!this.game.isOver()) return false;
+    if(!this.game.hasPlayed) return true;
+    return Math.floor(this.game.timeSpentWithNoPlayers / 3000) % 2 == 1;
   }
 
   private drawMessage(context: CanvasRenderingContext2D, ...lines: string[]) {

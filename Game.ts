@@ -3,6 +3,8 @@
 class Game {
   static queryableTypes: QueryableType[] = [];
 
+  static highScore = Number(localStorage.getItem('highScore') || 0);
+
   readonly context: CanvasRenderingContext2D;
 
   readonly center: Point;
@@ -178,6 +180,10 @@ class Game {
     if(this.isOver()) return;
     this.score += deltaScore;
     if(where) new ScoreParticles(this, deltaScore, where);
+    if(this.score > Game.highScore) {
+      Game.highScore = this.score;
+      localStorage.setItem('highScore', this.score.toString());
+    }
   }
 
   isOver() {
