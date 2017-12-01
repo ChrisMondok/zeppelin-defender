@@ -56,6 +56,7 @@ class SlidingThrowingEnemy extends GameObject {
     this.ambientSound = audioContext.createBufferSource();
     this.ambientSound.buffer = this.ambientSoundBuffer;
     this.ambientSound.loop = true;
+    this.ambientSound.playbackRate.value = 0.75 + Math.random() * 0.5;
     this.ambientSound.connect(this.panNode);
     this.panNode.connect(audioContext.destination);
     this.ambientSound.start(0);
