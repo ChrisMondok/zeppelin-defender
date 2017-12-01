@@ -159,9 +159,8 @@ class SlidingThrowingEnemy extends GameObject {
       yield* this.generatePassiveMoves(Math.floor(Math.random() * 3), center);
       yield new AimMove(this, aimTime, Math.random() < 0.5 ? Player : Cable);
       yield new FireMove(this);
+      yield new WaitMove(this, 500);
     }
-
-    yield new WaitMove(this, 500);
   }
 
   private *generatePassiveMoves(count: number, center: Point) {
