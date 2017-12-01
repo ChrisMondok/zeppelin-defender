@@ -18,6 +18,23 @@ class SlidingThrowingEnemy extends GameObject {
   @fillWithAudioBuffer('sounds/boom.ogg')
   private static boomSoundBuffer: AudioBuffer;
 
+  @fillWithImage('images/enemy/prop1.png')
+  private barberProp : HTMLImageElement;
+
+  @fillWithImage('images/enemy/prop2.png')
+  private holeyProp : HTMLImageElement;
+
+  @fillWithImage('images/enemy/prop3.png')
+  private camoProp : HTMLImageElement;
+
+  @fillWithImage('images/enemy/prop4.png')
+  private rainbowProp : HTMLImageElement;
+
+  private propellors = [this.barberProp, this.holeyProp, this.camoProp, this.rainbowProp];
+  private selectedProp: HTMLImageElement;
+  private numberOfProps: number;
+  private propRotation = 0;
+
   constructor(game: Game, spawnPoint: Point) {
     super(game);
     this.x = spawnPoint.x;
@@ -25,6 +42,8 @@ class SlidingThrowingEnemy extends GameObject {
     this.xpid = new PID(1, 0.00003, 200);
     this.ypid = new PID(1, 0.00003, 200);
     this.ai = new AI(this.game, this, Array.from(this.generateMoveList()));
+    this.selectedProp = this.propellors[Math.floor(Math.random() * 4)];
+    this.numberOfProps = Math.floor(Math.random() * 5) + 2;
   }
 
   tick(dt: number) {
@@ -44,6 +63,8 @@ class SlidingThrowingEnemy extends GameObject {
     if(directive.shouldDestroy) this.destroy();
 
     this.doProjectileInteraction();
+
+    this.propRotation += .15 + (Math.random() * 0.1);
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -61,6 +82,14 @@ class SlidingThrowingEnemy extends GameObject {
       context.lineTo(this.currentAimTarget.x, this.currentAimTarget.y);
       context.strokeStyle = 'purple';
       context.stroke();
+    }
+
+    context.translate(this.x, this.y)
+    for(let i=0; i<this.numberOfProps; i++) {
+      context.save();
+      context.rotate(this.propRotation + (2 * i * (Math.PI / this.numberOfProps)));
+      context.drawImage(this.selectedProp, -10, -50, 20, 50)
+      context.restore();
     }
   }
 
