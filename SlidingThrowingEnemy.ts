@@ -96,7 +96,7 @@ class SlidingThrowingEnemy extends GameObject {
     const oneEightRotation = Math.PI/4;
 
     let dir = direction(this.currentAimTarget, target);
-    dir = Math.floor(dir / oneEightRotation) * oneEightRotation;
+    dir = Math.round(dir / oneEightRotation) * oneEightRotation;
 
     target.x = clamp(Math.cos(dir) * dist + this.currentAimTarget.x,
       this.radius,
