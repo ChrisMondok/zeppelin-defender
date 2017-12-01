@@ -117,7 +117,8 @@ class Hud extends GameObject {
       if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
         context.font = "24px 'Poiret One'";
         context.fillStyle = 'white';
-        drawTextOutlined(context, 'Press Start or Space', this.game.center.x, this.game.center.y + 24);
+        const message2 = navigator.userAgent.indexOf('Xbox') === -1 ? 'Press Start or Space' : 'Press A';
+        drawTextOutlined(context, message2, this.game.center.x, this.game.center.y + 24);
       }
     } else {
       if(Math.floor(this.game.timeSpentWithNoPlayers / 1000) % 2) {
