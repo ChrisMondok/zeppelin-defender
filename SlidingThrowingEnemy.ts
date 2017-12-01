@@ -15,8 +15,14 @@ class SlidingThrowingEnemy extends GameObject {
   z = 2;
   radius = 25;
 
+  private ambientSound: AudioBufferSourceNode;
+  private panNode: PannerNode;
+
   @fillWithAudioBuffer('sounds/boom.ogg')
   private static boomSoundBuffer: AudioBuffer;
+
+  @fillWithAudioBuffer('sounds/chopper.ogg')
+  private ambientSoundBuffer: AudioBuffer;
 
   @fillWithImage('images/enemy/prop1.png')
   private barberProp : HTMLImageElement;
@@ -44,9 +50,19 @@ class SlidingThrowingEnemy extends GameObject {
     this.ai = new AI(this.game, this, Array.from(this.generateMoveList()));
     this.selectedProp = this.propellors[Math.floor(Math.random() * 4)];
     this.numberOfProps = Math.floor(Math.random() * 5) + 2;
+
+    this.panNode = audioContext.createPanner();
+
+    this.ambientSound = audioContext.createBufferSource();
+    this.ambientSound.buffer = this.ambientSoundBuffer;
+    this.ambientSound.loop = true;
+    this.ambientSound.connect(this.panNode);
+    this.panNode.connect(audioContext.destination);
+    this.ambientSound.start(0);
   }
 
   tick(dt: number) {
+    this.panNode.setPosition((this.x - this.game.center.x) / this.game.diagonalSize, (this.y - this.game.center.y) / this.game.diagonalSize, 1);
     const directive = this.ai.step(dt);
     this.currentDestination = directive.destination;
     if(this.currentDestination) {
@@ -91,6 +107,12 @@ class SlidingThrowingEnemy extends GameObject {
       context.drawImage(this.selectedProp, -10, -50, 20, 50)
       context.restore();
     }
+  }
+
+  destroy() {
+    this.ambientSound.stop();
+    this.panNode.disconnect();
+    super.destroy();
   }
 
   private *generateMoveList() {
