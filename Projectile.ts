@@ -18,10 +18,21 @@ class Projectile extends GameObject {
   }
 
   draw(context: CanvasRenderingContext2D) {
+    context.translate(this.x, this.y);
+    context.rotate(this.direction);
+
     context.beginPath();
-    context.fillStyle = 'black';
-    context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
+    context.moveTo(-4, -2);
+    context.lineTo(4, -2);
+    context.lineTo(14, 0);
+    context.lineTo(4, 2);
+    context.lineTo(-4, 2);
+    context.closePath();
+
+    context.fillStyle = 'yellow';
+    context.strokeStyle = 'black';
     context.fill();
+    context.stroke();
   }
 
   @fillWithAudioBuffer('sounds/pew.wav')
