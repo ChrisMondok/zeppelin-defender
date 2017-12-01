@@ -1,7 +1,7 @@
 /// <reference path="GameObject.ts"/>
 
 class Hud extends GameObject {
-  z = Infinity;
+  z = 999999;
 
   scoreDigits: Digit[] = [];
 
