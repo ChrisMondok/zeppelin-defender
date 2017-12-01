@@ -5,9 +5,23 @@ html, body {
 	margin: 0;
 	background-color: black;
 	font-family: 'Poiret One', cursive;
+	font-size: 32px;
+	color: white;
 }
 canvas {
 	object-fit: contain;
 	height: 100%;
 	width: 100%;
+}
+
+div {
+	position: absolute;
+	left: 0;
+	top: 25%;
+	right: 0;
+	bottom: 25%;
+	background-color: #555;
+	display: flex;
+	padding: 1em;
+	font-style: italic;
 }

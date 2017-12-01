@@ -7,6 +7,9 @@ function addAsset(asset: Promise<void>) {
 
 window.addEventListener('load', () => {
   assetsLoaded.then(() => {
+    const loadingDiv = document.querySelector('div')!;
+    loadingDiv.parentElement!.removeChild(loadingDiv);
+
     let game = (window as any).game = new Game();
 
     requestAnimationFrame(draw);
@@ -16,6 +19,9 @@ window.addEventListener('load', () => {
       game.draw();
       requestAnimationFrame(draw);
     }
+  }, e => {
+    const loadingDiv = document.querySelector('div')!;
+    loadingDiv.innerText = e;
   });
 });
 
@@ -25,10 +31,15 @@ function fillWithAudioBuffer(url: string): PropertyDecorator {
   return function(target: any, propertyKey: string) {
     addAsset(
       fetch(url)
-      .then(data => data.arrayBuffer())
+      .then(data => {
+        if(data.status < 200 || data.status > 400) throw new Error(`Could not load ${url}`);
+        return data.arrayBuffer();
+      })
       .then(ab => {
         return new Promise<AudioBuffer>((resolve, reject) => {
-          audioContext.decodeAudioData(ab, resolve, reject);
+          audioContext.decodeAudioData(ab, resolve, (e) => {
+            reject(`Could not decode ${url}`);
+          });
         });
 
       }).then((buffer: AudioBuffer) => {
@@ -42,6 +53,7 @@ function fillWithImage(url: string): PropertyDecorator {
     const promise = new Promise<void>((resolve, reject) => {
       const image = new Image();
       image.onload = () => resolve();
+      image.onerror = () => reject(`Could not load image ${url}`);
       image.src = url;
       target[propertyKey] = image;
     });
