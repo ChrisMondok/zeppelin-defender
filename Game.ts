@@ -21,6 +21,8 @@ class Game {
 
   hasPlayed = false;
 
+  isFirstLife = true;
+
   private readonly objects: GameObject[] = [];
 
   private readonly objectsByType: {[key: number]: GameObject[]} = {};
@@ -65,6 +67,7 @@ class Game {
   }
 
   reset(input: Input) {
+    this.isFirstLife = true;
     this.hasPlayed = true;
     this.inputMethod = input;
     while(this.objects.length) {
@@ -216,6 +219,8 @@ class Game {
   private spawnPlayer() {
     this.lives--;
     const p = new Player(this);
+    p.invincible = !this.isFirstLife;
+    this.isFirstLife = false;
     const platform = this.getObjectsOfType(Platform)[0];
     p.x = platform.center.x;
     p.y = platform.center.y;

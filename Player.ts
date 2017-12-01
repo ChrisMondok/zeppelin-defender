@@ -22,6 +22,10 @@ class Player extends GameObject {
 
   fireCooldown = 0;
 
+  lifetime = 0;
+
+  invincible = false;
+
   static readonly reloadTime = 1000;
 
   constructor(readonly game: Game) {
@@ -29,6 +33,10 @@ class Player extends GameObject {
   }
 
   tick(dt: number) {
+    this.lifetime += dt;
+
+    if(this.lifetime > 3000) this.invincible = false;
+
     if(!this.shield && Math.max(Math.abs(this.moveX), Math.abs(this.moveY)) > 0) {
       this.direction = Math.atan2(this.moveY, this.moveX);
     }
@@ -76,6 +84,7 @@ class Player extends GameObject {
     context.fill();
     context.restore();
 
+    if(this.invincible && Math.floor(this.lifetime / 125) % 2) return;
     //draw player
     context.translate(this.x, this.y - this.z/2);
     const scale = Math.max(0, 1 + this.z/200);
@@ -96,6 +105,7 @@ class Player extends GameObject {
   @bindTo('FIRE', 'press')
   fireProjectile() {
     if(this.ammo <= 0 || this.fireCooldown > 0) return;
+    this.invincible = false;
     this.ammo--;
     this.fireCooldown = Player.reloadTime;
     const projectile = new Projectile(this.game, this.x, this.y, this.direction);
@@ -127,6 +137,10 @@ class Player extends GameObject {
     if(this.shield) this.shield.destroy();
     this.removeFromPlatform();
     this.game.remove(this);
+  }
+
+  isInvincible() {
+    return this.lifetime < 3000;
   }
 
   @fillWithAudioBuffer('sounds/ohno.wav')
@@ -182,6 +196,7 @@ class Player extends GameObject {
   }
 
   private doBulletInteraction() {
+    if(this.invincible) return;
     for(const projectile of this.game.getObjectsOfType(Projectile)) {
       if(projectile.team === 'PLAYER') continue;
       if(distanceSquared(this, projectile) < Math.pow(this.radius, 2)) {
